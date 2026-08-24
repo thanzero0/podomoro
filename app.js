@@ -1,17 +1,17 @@
 /**
- * Its Podomoro - Stable Timer Logic Engine & 9 Dynamic Organic Motion Themes
+ * Its Podomoro - Ultra Secure & Protected Timer Engine
  */
 
 document.addEventListener('DOMContentLoaded', () => {
 
-  // --- STATE ENGINE ---
+  // --- SAFE STATE & ENGINE LOCKS ---
   const state = {
     mode: 'pomodoro', // 'pomodoro' | 'shortBreak' | 'longBreak'
     timerState: 'stopped', // 'stopped' | 'running' | 'paused'
     timeLeft: 25 * 60,
     totalDuration: 25 * 60,
     timerId: null,
-    targetEndTime: null, // Robust Timestamp-based Countdown Engine to avoid unwanted resets!
+    targetEndTime: null, // Robust Timestamp-based countdown
     
     // User Settings
     settings: {
@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
       bgDarken: 40
     },
 
-    // Tasks & Focus Data
+    // Tasks
     tasks: [],
 
     // Stats
@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
       currentStreak: 1
     },
 
-    // Audio Ambience
+    // Audio Ambience Track Volumes
     ambientTracks: { rain: 0, waves: 0, forest: 0, space: 0 }
   };
 
@@ -99,18 +99,31 @@ document.addEventListener('DOMContentLoaded', () => {
     renderTasks();
     updateHeaderStats();
     setupEventListeners();
+
+    // Prevent accidental browser tab close / refresh when timer is running
+    window.addEventListener('beforeunload', (e) => {
+      if (state.timerState === 'running') {
+        e.preventDefault();
+        e.returnValue = 'Timer is currently running. Are you sure you want to leave?';
+        return e.returnValue;
+      }
+    });
   }
 
   // --- LOCAL STORAGE ---
   function loadLocalStorage() {
-    const savedSettings = localStorage.getItem('itspodomoro_settings');
-    if (savedSettings) Object.assign(state.settings, JSON.parse(savedSettings));
+    try {
+      const savedSettings = localStorage.getItem('itspodomoro_settings');
+      if (savedSettings) Object.assign(state.settings, JSON.parse(savedSettings));
 
-    const savedTasks = localStorage.getItem('itspodomoro_tasks');
-    if (savedTasks) state.tasks = JSON.parse(savedTasks);
+      const savedTasks = localStorage.getItem('itspodomoro_tasks');
+      if (savedTasks) state.tasks = JSON.parse(savedTasks);
 
-    const savedStats = localStorage.getItem('itspodomoro_stats');
-    if (savedStats) Object.assign(state.stats, JSON.parse(savedStats));
+      const savedStats = localStorage.getItem('itspodomoro_stats');
+      if (savedStats) Object.assign(state.stats, JSON.parse(savedStats));
+    } catch (err) {
+      console.warn('LocalStorage error:', err);
+    }
 
     el.settingPomoTime.value = state.settings.pomodoro;
     el.settingShortBreak.value = state.settings.shortBreak;
@@ -123,9 +136,13 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function saveSettingsToStorage() {
-    localStorage.setItem('itspodomoro_settings', JSON.stringify(state.settings));
-    localStorage.setItem('itspodomoro_tasks', JSON.stringify(state.tasks));
-    localStorage.setItem('itspodomoro_stats', JSON.stringify(state.stats));
+    try {
+      localStorage.setItem('itspodomoro_settings', JSON.stringify(state.settings));
+      localStorage.setItem('itspodomoro_tasks', JSON.stringify(state.tasks));
+      localStorage.setItem('itspodomoro_stats', JSON.stringify(state.stats));
+    } catch (err) {
+      console.warn('Storage save failed:', err);
+    }
   }
 
   // --- 9 GENERATIVE ORGANIC MOTION THEMES (HTML5 CANVAS ENGINE) ---
@@ -156,9 +173,9 @@ document.addEventListener('DOMContentLoaded', () => {
         case 'nature': drawSereneNatureScene(); break;
         case 'synthwave': drawSynthwaveGridScene(); break;
         case 'liquid': drawOrganicLiquidScene(); break;
-        case 'matrix': drawMatrixDigitalRain(); break; // NEW 7
-        case 'fireflies': drawMidnightFireflies(); break; // NEW 8
-        case 'waves': drawSunsetOceanWaves(); break; // NEW 9
+        case 'matrix': drawMatrixDigitalRain(); break;
+        case 'fireflies': drawMidnightFireflies(); break;
+        case 'waves': drawSunsetOceanWaves(); break;
         default: drawCyberpunkNeonScene(); break;
       }
 
@@ -282,8 +299,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // --- 3 NEW MOTION THEMES ---
-
   // Theme 7: Matrix Digital Rain
   function drawMatrixDigitalRain() {
     const w = el.bgCanvas.width, h = el.bgCanvas.height;
@@ -352,7 +367,7 @@ document.addEventListener('DOMContentLoaded', () => {
     state.settings.bgDarken = el.darkenSlider.value;
   }
 
-  // --- STABLE TIMESTAMP-BASED TIMER ENGINE (Prevents accidental reset) ---
+  // --- SAFE & ACCURATE TIMESTAMP TIMER ENGINE ---
   function updateTimerDisplay() {
     const minutes = Math.floor(state.timeLeft / 60);
     const seconds = state.timeLeft % 60;
@@ -405,13 +420,38 @@ document.addEventListener('DOMContentLoaded', () => {
     updateTimerDisplay();
   }
 
+  // PROTECTED MODE SWITCHING (Prompts user if timer is running)
   function switchMode(newMode) {
     if (state.mode === newMode && state.timerState === 'running') return;
+
+    if (state.timerState === 'running') {
+      const confirmSwitch = confirm('A focus session is currently running! Are you sure you want to switch mode and reset the current timer?');
+      if (!confirmSwitch) return;
+    }
+
     state.mode = newMode;
     el.modeBtns.forEach(btn => {
       btn.classList.toggle('active', btn.dataset.mode === newMode);
     });
     resetTimer();
+  }
+
+  // PROTECTED RESET ACTION
+  function handleProtectedReset() {
+    if (state.timerState === 'running') {
+      const confirmReset = confirm('Are you sure you want to reset the active timer session? Progress will be lost.');
+      if (!confirmReset) return;
+    }
+    resetTimer();
+  }
+
+  // PROTECTED SKIP ACTION
+  function handleProtectedSkip() {
+    if (state.timerState === 'running') {
+      const confirmSkip = confirm('Are you sure you want to skip this active session?');
+      if (!confirmSkip) return;
+    }
+    completeSession();
   }
 
   function completeSession() {
@@ -430,21 +470,27 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function playAlarmSound() {
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.connect(gain); gain.connect(audioCtx.destination);
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(587.33, audioCtx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.6);
-    gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.2);
-    osc.start(); osc.stop(audioCtx.currentTime + 1.2);
+    try {
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(587.33, audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.6);
+      gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.2);
+      osc.start(); osc.stop(audioCtx.currentTime + 1.2);
+    } catch (e) {
+      console.warn('Audio play failed:', e);
+    }
   }
 
   // --- TASK MANAGER ---
   function addTask(title) {
-    state.tasks.push({ id: Date.now().toString(), title, completed: false });
+    const cleanTitle = escapeHTML(title.trim());
+    if (!cleanTitle) return;
+    state.tasks.push({ id: Date.now().toString(), title: cleanTitle, completed: false });
     saveSettingsToStorage();
     renderTasks();
   }
@@ -472,7 +518,7 @@ document.addEventListener('DOMContentLoaded', () => {
       li.innerHTML = `
         <div class="task-left">
           <div class="checkbox-custom" data-id="${task.id}">${task.completed ? '<i class="fa-solid fa-check"></i>' : ''}</div>
-          <span class="task-title-text">${escapeHTML(task.title)}</span>
+          <span class="task-title-text">${task.title}</span>
         </div>
         <button class="btn-task-action btn-delete-task" data-id="${task.id}"><i class="fa-solid fa-trash-can"></i></button>
       `;
@@ -484,7 +530,9 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function escapeHTML(str) {
-    return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
+    const div = document.createElement('div');
+    div.innerText = str;
+    return div.innerHTML;
   }
 
   function updateHeaderStats() {
@@ -494,8 +542,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // --- EVENT LISTENERS ---
   function setupEventListeners() {
     el.btnStart.addEventListener('click', () => state.timerState === 'running' ? pauseTimer() : startTimer());
-    el.btnReset.addEventListener('click', resetTimer);
-    el.btnSkip.addEventListener('click', () => { if (confirm('Skip this session?')) completeSession(); });
+    el.btnReset.addEventListener('click', handleProtectedReset);
+    el.btnSkip.addEventListener('click', handleProtectedSkip);
 
     el.modeBtns.forEach(btn => btn.addEventListener('click', () => switchMode(btn.dataset.mode)));
 
@@ -531,13 +579,23 @@ document.addEventListener('DOMContentLoaded', () => {
     el.speedSlider.addEventListener('input', applyOverlayEffects);
     el.darkenSlider.addEventListener('input', applyOverlayEffects);
 
-    // Save Settings ONLY updates settings WITHOUT resetting running timer!
+    // PROTECTED SAVE SETTINGS (Warns user if timer is active before re-configuring duration)
     el.btnSaveSettings.addEventListener('click', () => {
-      state.settings.pomodoro = parseInt(el.settingPomoTime.value) || 25;
-      state.settings.shortBreak = parseInt(el.settingShortBreak.value) || 5;
-      state.settings.longBreak = parseInt(el.settingLongBreak.value) || 15;
+      const newPomo = Math.max(1, Math.min(120, parseInt(el.settingPomoTime.value) || 25));
+      const newShort = Math.max(1, Math.min(60, parseInt(el.settingShortBreak.value) || 5));
+      const newLong = Math.max(1, Math.min(60, parseInt(el.settingLongBreak.value) || 15));
+
+      if (state.timerState === 'running') {
+        const confirmSave = confirm('Timer is active! Saving new durations will reset the active session. Do you wish to proceed?');
+        if (!confirmSave) return;
+      }
+
+      state.settings.pomodoro = newPomo;
+      state.settings.shortBreak = newShort;
+      state.settings.longBreak = newLong;
+
       saveSettingsToStorage();
-      if (state.timerState !== 'running') resetTimer();
+      resetTimer();
       el.modalMaster.classList.remove('active');
     });
   }
