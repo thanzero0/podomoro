@@ -3,13 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Podomoro Time | Minimalist Cyber Focus</title>
-  <meta name="description" content="Ultra Minimalist Pomodoro Focus Suite with Interactive Dynamic Motion Canvas Backgrounds and Fullscreen Focus Mode.">
+  <title>Its Podomoro</title>
+  <meta name="description" content="Its Podomoro - Minimalist Aesthetic Focus Timer.">
+  
+  <!-- Favicon Tab Icon -->
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
   
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -19,7 +22,7 @@
 </head>
 <body class="theme-cyberpunk">
 
-  <!-- Interactive Generative Motion Background Canvas Layer -->
+  <!-- Interactive Organic Canvas Motion Layer (9 Motion Scenes) -->
   <div id="bg-container">
     <canvas id="bg-canvas"></canvas>
     <div class="bg-overlay"></div>
@@ -28,60 +31,52 @@
   <!-- Main App Shell -->
   <div id="app">
 
-    <!-- Top Navigation (Minimalist Clean Floating Header) -->
+    <!-- Top Navigation Header -->
     <header class="navbar-minimal">
       <div class="logo">
         <div class="logo-icon">
-          <i class="fa-solid fa-bolt-lightning"></i>
+          <i class="fa-solid fa-stopwatch"></i>
         </div>
-        <span class="logo-text">PODOMORO<span class="highlight">TIME</span></span>
+        <span class="logo-text">ITS<span class="highlight">PODOMORO</span></span>
       </div>
 
-      <!-- Clean Floating Header Quick Controls -->
+      <!-- Clean Header Quick Actions -->
       <div class="header-minimal-actions">
         <!-- Streak Display -->
         <div class="stat-pill" title="Daily Streak">
           <i class="fa-solid fa-fire streak-flame"></i>
-          <span id="streak-count">0</span> Days
+          <span id="streak-count">0</span>
         </div>
 
-        <!-- Single Unified Master Control Button -->
-        <button class="icon-btn master-menu-btn" id="btn-master-menu" title="Open Master Control Panel">
+        <!-- Master Control Button -->
+        <button class="icon-btn master-menu-btn" id="btn-master-menu" title="Open Controls">
           <i class="fa-solid fa-sliders"></i>
-          <span class="menu-label">Controls</span>
         </button>
 
-        <!-- Hide UI / Fullscreen Zen Mode Button -->
-        <button class="icon-btn" id="btn-zen-mode" title="Clean Screen / Hide Interface">
+        <!-- Clean Screen / Zen Mode Toggle -->
+        <button class="icon-btn" id="btn-zen-mode" title="Clean Screen">
           <i class="fa-solid fa-eye-slash"></i>
         </button>
       </div>
     </header>
 
-    <!-- Center Focused Main Container -->
+    <!-- Center Timer Card -->
     <main class="main-content-centered">
       
-      <!-- Primary Timer Display Card -->
       <div class="timer-card glass-card">
 
         <!-- Mode Switcher Tabs -->
         <div class="mode-tabs">
-          <button class="mode-btn active" data-mode="pomodoro">
-            <i class="fa-solid fa-brain"></i> Focus
-          </button>
-          <button class="mode-btn" data-mode="shortBreak">
-            <i class="fa-solid fa-mug-hot"></i> Short Break
-          </button>
-          <button class="mode-btn" data-mode="longBreak">
-            <i class="fa-solid fa-couch"></i> Long Break
-          </button>
+          <button class="mode-btn active" data-mode="pomodoro">Focus</button>
+          <button class="mode-btn" data-mode="shortBreak">Short Break</button>
+          <button class="mode-btn" data-mode="longBreak">Long Break</button>
         </div>
 
         <!-- Glowing Circular Progress Ring -->
         <div class="timer-display-wrapper">
           <svg class="progress-ring" width="340" height="340" viewBox="0 0 340 340">
-            <circle class="progress-ring__background" stroke="rgba(255, 255, 255, 0.08)" stroke-width="12" fill="transparent" r="150" cx="170" cy="170"/>
-            <circle class="progress-ring__circle" stroke="url(#ring-gradient)" stroke-width="14" stroke-linecap="round" fill="transparent" r="150" cx="170" cy="170"/>
+            <circle class="progress-ring__background" stroke="rgba(255, 255, 255, 0.06)" stroke-width="10" fill="transparent" r="150" cx="170" cy="170"/>
+            <circle class="progress-ring__circle" stroke="url(#ring-gradient)" stroke-width="12" stroke-linecap="round" fill="transparent" r="150" cx="170" cy="170"/>
             <defs>
               <linearGradient id="ring-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
                 <stop offset="0%" stop-color="var(--accent-color)" />
@@ -92,11 +87,7 @@
 
           <!-- Inner Clock Display -->
           <div class="timer-inner">
-            <div class="active-task-badge" id="active-task-badge">
-              <i class="fa-solid fa-target"></i> <span id="active-task-title">Ready for Deep Focus</span>
-            </div>
             <div class="timer-time" id="timer-display">25:00</div>
-            <div class="timer-status-text" id="timer-status-label">READY TO FOCUS</div>
             <div class="session-round-dots" id="session-dots">
               <span class="dot active"></span>
               <span class="dot"></span>
@@ -106,16 +97,16 @@
           </div>
         </div>
 
-        <!-- Main Timer Action Buttons -->
+        <!-- Main Timer Controls -->
         <div class="timer-controls">
-          <button class="btn-control btn-secondary" id="btn-reset" title="Reset Timer">
+          <button class="btn-control btn-secondary" id="btn-reset" title="Reset">
             <i class="fa-solid fa-rotate-left"></i>
           </button>
-          <button class="btn-control btn-main" id="btn-start" title="Start / Pause Session">
+          <button class="btn-control btn-main" id="btn-start">
             <i class="fa-solid fa-play" id="start-icon"></i>
             <span id="start-btn-text">START</span>
           </button>
-          <button class="btn-control btn-secondary" id="btn-skip" title="Skip Session">
+          <button class="btn-control btn-secondary" id="btn-skip" title="Skip">
             <i class="fa-solid fa-forward-step"></i>
           </button>
         </div>
@@ -124,7 +115,7 @@
 
     </main>
 
-    <!-- Floating Clean Task Bar (Bottom Centered) -->
+    <!-- Floating Clean Bottom Task Bar -->
     <div class="task-bar-floating glass-card" id="task-bar-container">
       <div class="task-bar-header">
         <div class="task-bar-title">
@@ -139,11 +130,7 @@
       <div class="task-panel-content hidden" id="task-panel-content">
         <form id="add-task-form" class="task-form">
           <div class="input-group">
-            <input type="text" id="task-title-input" placeholder="Add new focus target..." required autocomplete="off">
-            <div class="pomo-est-input" title="Estimated Pomodoros">
-              <i class="fa-solid fa-clock"></i>
-              <input type="number" id="task-pomo-est" min="1" max="20" value="1">
-            </div>
+            <input type="text" id="task-title-input" placeholder="Add task..." required autocomplete="off">
             <button type="submit" class="btn-add-task">
               <i class="fa-solid fa-plus"></i>
             </button>
@@ -151,222 +138,140 @@
         </form>
 
         <ul class="task-list" id="task-list">
-          <!-- Dynamic Task Items -->
+          <!-- Dynamic Tasks -->
         </ul>
       </div>
     </div>
 
   </div>
 
-  <!-- Single Unified Master Control Drawer / Modal -->
+  <!-- Master Controls Drawer -->
   <div class="modal-overlay" id="modal-master">
     <div class="modal-box glass-card master-drawer">
       <div class="modal-header">
-        <h2><i class="fa-solid fa-sliders"></i> Master Control Panel</h2>
+        <h2><i class="fa-solid fa-sliders"></i> Controls</h2>
         <button class="btn-close-modal" id="btn-close-master"><i class="fa-solid fa-xmark"></i></button>
       </div>
 
       <div class="modal-body master-body">
         
-        <!-- Tab Navigation inside Master Menu -->
         <div class="master-tabs">
-          <button class="master-tab active" data-tab="tab-themes"><i class="fa-solid fa-film"></i> 6 Motion Themes</button>
-          <button class="master-tab" data-tab="tab-audio"><i class="fa-solid fa-music"></i> Audio & Ambience</button>
-          <button class="master-tab" data-tab="tab-timer"><i class="fa-solid fa-clock"></i> Timer Config</button>
-          <button class="master-tab" data-tab="tab-stats"><i class="fa-solid fa-chart-pie"></i> Productivity Stats</button>
+          <button class="master-tab active" data-tab="tab-themes"><i class="fa-solid fa-palette"></i> 9 Themes</button>
+          <button class="master-tab" data-tab="tab-audio"><i class="fa-solid fa-volume-high"></i> Ambience</button>
+          <button class="master-tab" data-tab="tab-timer"><i class="fa-solid fa-clock"></i> Durations</button>
         </div>
 
-        <!-- TAB 1: 6 Interactive Animated Motion Background Themes -->
+        <!-- TAB 1: 9 Dynamic Motion Themes (Original 6 + 3 New) -->
         <div class="master-tab-content active" id="tab-themes">
-          <p class="modal-subtext">Choose from 6 stunning dynamic motion background scenes to customize your focus environment:</p>
-          
           <div class="theme-grid">
             <div class="theme-card active" data-theme="cyberpunk">
-              <div class="theme-preview theme-cyberpunk-preview">
-                <span class="theme-badge">Neon</span>
-              </div>
-              <div class="theme-info">
-                <h4>1. Cyberpunk City Rain</h4>
-                <p>Futuristic neon glowing rain with dark cyber urban vibe.</p>
-              </div>
+              <div class="theme-preview theme-cyberpunk-preview"></div>
+              <div class="theme-info"><h4>1. Cyber Neon</h4></div>
             </div>
 
             <div class="theme-card" data-theme="galaxy">
-              <div class="theme-preview theme-galaxy-preview">
-                <span class="theme-badge">Cosmic</span>
-              </div>
-              <div class="theme-info">
-                <h4>2. Cosmic Nebula Galaxy</h4>
-                <p>Deep space twinkling stars, purple nebulae & galaxy swirl.</p>
-              </div>
+              <div class="theme-preview theme-galaxy-preview"></div>
+              <div class="theme-info"><h4>2. Deep Space</h4></div>
             </div>
 
             <div class="theme-card" data-theme="lofi">
-              <div class="theme-preview theme-lofi-preview">
-                <span class="theme-badge">Relax</span>
-              </div>
-              <div class="theme-info">
-                <h4>3. Cozy Lofi Rain Drops</h4>
-                <p>Gentle warm coffee shop rain drops sliding on window glass.</p>
-              </div>
+              <div class="theme-preview theme-lofi-preview"></div>
+              <div class="theme-info"><h4>3. Cozy Rain</h4></div>
             </div>
 
             <div class="theme-card" data-theme="nature">
-              <div class="theme-preview theme-nature-preview">
-                <span class="theme-badge">Nature</span>
-              </div>
-              <div class="theme-info">
-                <h4>4. Serene Bamboo Forest</h4>
-                <p>Lush emerald bamboo shoots swaying in serene sunlight breeze.</p>
-              </div>
+              <div class="theme-preview theme-nature-preview"></div>
+              <div class="theme-info"><h4>4. Forest Breeze</h4></div>
             </div>
 
             <div class="theme-card" data-theme="synthwave">
-              <div class="theme-preview theme-synthwave-preview">
-                <span class="theme-badge">Retro</span>
-              </div>
-              <div class="theme-info">
-                <h4>5. Sunset Synthwave Grid</h4>
-                <p>80s retro-futuristic glowing horizon, neon wireframes & sunset.</p>
-              </div>
+              <div class="theme-preview theme-synthwave-preview"></div>
+              <div class="theme-info"><h4>5. Retro Horizon</h4></div>
             </div>
 
             <div class="theme-card" data-theme="liquid">
-              <div class="theme-preview theme-liquid-preview">
-                <span class="theme-badge">Abstract</span>
-              </div>
-              <div class="theme-info">
-                <h4>6. Organic Liquid Flow</h4>
-                <p>Morphing fluid color gradients with dynamic organic motion.</p>
-              </div>
+              <div class="theme-preview theme-liquid-preview"></div>
+              <div class="theme-info"><h4>6. Fluid Aurora</h4></div>
+            </div>
+
+            <!-- 3 NEW ANIMATIONS -->
+            <div class="theme-card" data-theme="matrix">
+              <div class="theme-preview theme-matrix-preview"></div>
+              <div class="theme-info"><h4>7. Matrix Digital</h4></div>
+            </div>
+
+            <div class="theme-card" data-theme="fireflies">
+              <div class="theme-preview theme-fireflies-preview"></div>
+              <div class="theme-info"><h4>8. Midnight Glow</h4></div>
+            </div>
+
+            <div class="theme-card" data-theme="waves">
+              <div class="theme-preview theme-waves-preview"></div>
+              <div class="theme-info"><h4>9. Sunset Wave</h4></div>
             </div>
           </div>
 
           <div class="theme-settings-panel">
             <div class="setting-item">
-              <label for="speed-slider">Motion Animation Speed</label>
+              <label for="speed-slider">Speed</label>
               <input type="range" id="speed-slider" min="1" max="10" value="5">
             </div>
             <div class="setting-item">
-              <label for="darken-slider">Background Darkness Overlay</label>
+              <label for="darken-slider">Darkness</label>
               <input type="range" id="darken-slider" min="0" max="90" value="40">
             </div>
           </div>
         </div>
 
-        <!-- TAB 2: Audio & Ambient Mixer -->
+        <!-- TAB 2: Audio Ambience Mixer -->
         <div class="master-tab-content" id="tab-audio">
           <div class="audio-track-list">
             <div class="audio-track-item">
-              <div class="track-info"><i class="fa-solid fa-cloud-showers-heavy"></i> <span>Rain & Gentle Thunder</span></div>
+              <div class="track-info"><i class="fa-solid fa-cloud-showers-heavy"></i> <span>Rain</span></div>
               <input type="range" class="audio-track-vol" data-track="rain" min="0" max="100" value="0">
             </div>
             <div class="audio-track-item">
-              <div class="track-info"><i class="fa-solid fa-water"></i> <span>Ocean Waves</span></div>
+              <div class="track-info"><i class="fa-solid fa-water"></i> <span>Waves</span></div>
               <input type="range" class="audio-track-vol" data-track="waves" min="0" max="100" value="0">
             </div>
             <div class="audio-track-item">
-              <div class="track-info"><i class="fa-solid fa-tree"></i> <span>Forest & Bird Chime</span></div>
+              <div class="track-info"><i class="fa-solid fa-tree"></i> <span>Forest</span></div>
               <input type="range" class="audio-track-vol" data-track="forest" min="0" max="100" value="0">
             </div>
             <div class="audio-track-item">
-              <div class="track-info"><i class="fa-solid fa-wind"></i> <span>Deep Cosmic White Noise</span></div>
+              <div class="track-info"><i class="fa-solid fa-wind"></i> <span>White Noise</span></div>
               <input type="range" class="audio-track-vol" data-track="space" min="0" max="100" value="0">
-            </div>
-            <div class="audio-track-item">
-              <div class="track-info"><i class="fa-solid fa-fire-burner"></i> <span>Campfire Crackle</span></div>
-              <input type="range" class="audio-track-vol" data-track="fire" min="0" max="100" value="0">
-            </div>
-            <div class="audio-track-item">
-              <div class="track-info"><i class="fa-solid fa-stopwatch"></i> <span>Subtle Clock Ticking</span></div>
-              <input type="range" class="audio-track-vol" data-track="tick" min="0" max="100" value="0">
             </div>
           </div>
         </div>
 
-        <!-- TAB 3: Timer & Automation Settings -->
+        <!-- TAB 3: Timer Durations Config -->
         <div class="master-tab-content" id="tab-timer">
           <div class="settings-group">
-            <h3>Timer Durations (Minutes)</h3>
             <div class="duration-inputs">
               <div class="input-field">
-                <label>Focus (Pomodoro)</label>
+                <label>Focus (Min)</label>
                 <input type="number" id="setting-pomo-time" min="1" max="120" value="25">
               </div>
               <div class="input-field">
-                <label>Short Break</label>
+                <label>Short Break (Min)</label>
                 <input type="number" id="setting-short-break" min="1" max="60" value="5">
               </div>
               <div class="input-field">
-                <label>Long Break</label>
+                <label>Long Break (Min)</label>
                 <input type="number" id="setting-long-break" min="1" max="60" value="15">
               </div>
             </div>
           </div>
 
-          <div class="settings-group">
-            <h3>Automation & Sound Alarm</h3>
-            <div class="toggle-row">
-              <span>Auto-start Breaks</span>
-              <label class="switch">
-                <input type="checkbox" id="setting-auto-break">
-                <span class="slider round"></span>
-              </label>
-            </div>
-            <div class="toggle-row">
-              <span>Auto-start Pomodoros</span>
-              <label class="switch">
-                <input type="checkbox" id="setting-auto-pomo">
-                <span class="slider round"></span>
-              </label>
-            </div>
-            <div class="setting-item">
-              <label for="setting-sound-alarm">Alarm Chime Sound</label>
-              <select id="setting-sound-alarm" class="custom-select">
-                <option value="chime">Gentle Zen Chime</option>
-                <option value="digital">Cyber Digital Alarm</option>
-                <option value="bell">Tibetan Meditation Bell</option>
-              </select>
-            </div>
-          </div>
-
-          <button class="btn-primary-action" id="btn-save-settings">Save Configurations</button>
-        </div>
-
-        <!-- TAB 4: Productivity Statistics -->
-        <div class="master-tab-content" id="tab-stats">
-          <div class="stats-overview-grid">
-            <div class="stat-card">
-              <div class="stat-number" id="stats-total-sessions">0</div>
-              <div class="stat-label">Sessions Completed</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-number" id="stats-total-hours">0 hrs</div>
-              <div class="stat-label">Total Focus Time</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-number" id="stats-best-streak">0 days</div>
-              <div class="stat-label">Best Streak</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-number" id="stats-task-ratio">0%</div>
-              <div class="stat-label">Tasks Completed</div>
-            </div>
-          </div>
-
-          <div class="chart-container">
-            <h3>Focus Minutes (Last 7 Days)</h3>
-            <div class="bar-chart" id="weekly-chart">
-              <!-- Dynamic Chart Bars -->
-            </div>
-          </div>
+          <button class="btn-primary-action" id="btn-save-settings">Save</button>
         </div>
 
       </div>
     </div>
   </div>
 
-  <!-- Application Logic Scripts -->
+  <!-- JS Core Engine -->
   <script src="app.js"></script>
 </body>
 </html>

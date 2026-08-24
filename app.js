@@ -1,5 +1,5 @@
 /**
- * Podomoro Time - Minimalist Cyber & Generative Motion Canvas Engine
+ * Its Podomoro - Stable Timer Logic Engine & 9 Dynamic Organic Motion Themes
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -11,15 +11,13 @@ document.addEventListener('DOMContentLoaded', () => {
     timeLeft: 25 * 60,
     totalDuration: 25 * 60,
     timerId: null,
+    targetEndTime: null, // Robust Timestamp-based Countdown Engine to avoid unwanted resets!
     
     // User Settings
     settings: {
       pomodoro: 25,
       shortBreak: 5,
       longBreak: 15,
-      autoBreak: false,
-      autoPomo: false,
-      alarmSound: 'chime',
       theme: 'cyberpunk',
       motionSpeed: 5,
       bgDarken: 40
@@ -27,19 +25,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Tasks & Focus Data
     tasks: [],
-    activeTaskId: null,
 
     // Stats
     stats: {
       completedSessionsToday: 0,
       totalFocusMinutesToday: 0,
-      currentStreak: 1,
-      bestStreak: 1,
-      weeklyMinutes: [45, 60, 90, 120, 75, 110, 0]
+      currentStreak: 1
     },
 
-    // Audio Ambience Track Volumes
-    ambientTracks: { rain: 0, waves: 0, forest: 0, space: 0, fire: 0, tick: 0 }
+    // Audio Ambience
+    ambientTracks: { rain: 0, waves: 0, forest: 0, space: 0 }
   };
 
   // --- DOM ELEMENTS ---
@@ -50,63 +45,49 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Timer Display
     timerDisplay: document.getElementById('timer-display'),
-    timerStatusLabel: document.getElementById('timer-status-label'),
     ringCircle: document.querySelector('.progress-ring__circle'),
     modeBtns: document.querySelectorAll('.mode-btn'),
-    sessionDots: document.getElementById('session-dots'),
     
-    // Timer Controls
+    // Controls
     btnStart: document.getElementById('btn-start'),
     startIcon: document.getElementById('start-icon'),
     startBtnText: document.getElementById('start-btn-text'),
     btnReset: document.getElementById('btn-reset'),
     btnSkip: document.getElementById('btn-skip'),
     
-    // Header & Zen Actions
+    // Header & Actions
     streakCount: document.getElementById('streak-count'),
     btnMasterMenu: document.getElementById('btn-master-menu'),
     btnZenMode: document.getElementById('btn-zen-mode'),
     
-    // Tasks Bar
+    // Tasks
     taskBarContainer: document.getElementById('task-bar-container'),
     btnToggleTaskPanel: document.getElementById('btn-toggle-task-panel'),
     taskChevron: document.getElementById('task-chevron'),
     taskPanelContent: document.getElementById('task-panel-content'),
     addTaskForm: document.getElementById('add-task-form'),
     taskTitleInput: document.getElementById('task-title-input'),
-    taskPomoEst: document.getElementById('task-pomo-est'),
     taskList: document.getElementById('task-list'),
     completedTasksCount: document.getElementById('completed-tasks-count'),
     totalTasksCount: document.getElementById('total-tasks-count'),
-    activeTaskTitle: document.getElementById('active-task-title'),
 
-    // Master Modal & Tabs
+    // Master Modal
     modalMaster: document.getElementById('modal-master'),
     btnCloseMaster: document.getElementById('btn-close-master'),
     masterTabs: document.querySelectorAll('.master-tab'),
     masterTabContents: document.querySelectorAll('.master-tab-content'),
     
-    // Theme Selector & Sliders
+    // Themes & Sliders
     themeCards: document.querySelectorAll('.theme-card'),
     speedSlider: document.getElementById('speed-slider'),
     darkenSlider: document.getElementById('darken-slider'),
     
-    // Audio Tracks & Settings Inputs
+    // Audio Tracks & Settings
     audioTrackVols: document.querySelectorAll('.audio-track-vol'),
     settingPomoTime: document.getElementById('setting-pomo-time'),
     settingShortBreak: document.getElementById('setting-short-break'),
     settingLongBreak: document.getElementById('setting-long-break'),
-    settingAutoBreak: document.getElementById('setting-auto-break'),
-    settingAutoPomo: document.getElementById('setting-auto-pomo'),
-    settingSoundAlarm: document.getElementById('setting-sound-alarm'),
-    btnSaveSettings: document.getElementById('btn-save-settings'),
-
-    // Analytics Dashboard
-    statsTotalSessions: document.getElementById('stats-total-sessions'),
-    statsTotalHours: document.getElementById('stats-total-hours'),
-    statsBestStreak: document.getElementById('stats-best-streak'),
-    statsTaskRatio: document.getElementById('stats-task-ratio'),
-    weeklyChart: document.getElementById('weekly-chart')
+    btnSaveSettings: document.getElementById('btn-save-settings')
   };
 
   // --- INIT ---
@@ -122,21 +103,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- LOCAL STORAGE ---
   function loadLocalStorage() {
-    const savedSettings = localStorage.getItem('podomoro_settings');
+    const savedSettings = localStorage.getItem('itspodomoro_settings');
     if (savedSettings) Object.assign(state.settings, JSON.parse(savedSettings));
 
-    const savedTasks = localStorage.getItem('podomoro_tasks');
+    const savedTasks = localStorage.getItem('itspodomoro_tasks');
     if (savedTasks) state.tasks = JSON.parse(savedTasks);
 
-    const savedStats = localStorage.getItem('podomoro_stats');
+    const savedStats = localStorage.getItem('itspodomoro_stats');
     if (savedStats) Object.assign(state.stats, JSON.parse(savedStats));
 
     el.settingPomoTime.value = state.settings.pomodoro;
     el.settingShortBreak.value = state.settings.shortBreak;
     el.settingLongBreak.value = state.settings.longBreak;
-    el.settingAutoBreak.checked = state.settings.autoBreak;
-    el.settingAutoPomo.checked = state.settings.autoPomo;
-    el.settingSoundAlarm.value = state.settings.alarmSound;
     el.speedSlider.value = state.settings.motionSpeed;
     el.darkenSlider.value = state.settings.bgDarken;
 
@@ -145,12 +123,12 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function saveSettingsToStorage() {
-    localStorage.setItem('podomoro_settings', JSON.stringify(state.settings));
-    localStorage.setItem('podomoro_tasks', JSON.stringify(state.tasks));
-    localStorage.setItem('podomoro_stats', JSON.stringify(state.stats));
+    localStorage.setItem('itspodomoro_settings', JSON.stringify(state.settings));
+    localStorage.setItem('itspodomoro_tasks', JSON.stringify(state.tasks));
+    localStorage.setItem('itspodomoro_stats', JSON.stringify(state.stats));
   }
 
-  // --- 6 GENERATIVE MOTION ANIMATION ENGINE (HTML5 CANVAS) ---
+  // --- 9 GENERATIVE ORGANIC MOTION THEMES (HTML5 CANVAS ENGINE) ---
   let canvasCtx = null;
   let animFrameId = null;
   let motionElements = [];
@@ -171,7 +149,6 @@ document.addEventListener('DOMContentLoaded', () => {
       canvasTime += (state.settings.motionSpeed / 5) * 0.015;
       canvasCtx.clearRect(0, 0, el.bgCanvas.width, el.bgCanvas.height);
 
-      // Render Active Theme Motion Scene
       switch (state.settings.theme) {
         case 'cyberpunk': drawCyberpunkNeonScene(); break;
         case 'galaxy': drawCosmicGalaxyScene(); break;
@@ -179,6 +156,9 @@ document.addEventListener('DOMContentLoaded', () => {
         case 'nature': drawSereneNatureScene(); break;
         case 'synthwave': drawSynthwaveGridScene(); break;
         case 'liquid': drawOrganicLiquidScene(); break;
+        case 'matrix': drawMatrixDigitalRain(); break; // NEW 7
+        case 'fireflies': drawMidnightFireflies(); break; // NEW 8
+        case 'waves': drawSunsetOceanWaves(); break; // NEW 9
         default: drawCyberpunkNeonScene(); break;
       }
 
@@ -192,7 +172,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const h = el.bgCanvas.height;
     motionElements = [];
 
-    // Create 120 Particles / Motion Nodes
     for (let i = 0; i < 120; i++) {
       motionElements.push({
         x: Math.random() * w,
@@ -201,173 +180,155 @@ document.addEventListener('DOMContentLoaded', () => {
         speedY: Math.random() * 3 + 1,
         speedX: (Math.random() - 0.5) * 1.5,
         alpha: Math.random() * 0.8 + 0.2,
-        length: Math.random() * 25 + 10,
-        colorHue: Math.random() * 60
+        char: String.fromCharCode(0x30A0 + Math.floor(Math.random() * 96))
       });
     }
   }
 
-  // 1. Cyberpunk Neon City Rain
+  // Theme 1: Cyberpunk Neon Rain
   function drawCyberpunkNeonScene() {
-    const w = el.bgCanvas.width;
-    const h = el.bgCanvas.height;
-
-    // Dark Cyber Gradient Background
+    const w = el.bgCanvas.width, h = el.bgCanvas.height;
     const grad = canvasCtx.createLinearGradient(0, 0, w, h);
-    grad.addColorStop(0, '#050b14');
-    grad.addColorStop(0.5, '#120024');
-    grad.addColorStop(1, '#001a2c');
-    canvasCtx.fillStyle = grad;
-    canvasCtx.fillRect(0, 0, w, h);
+    grad.addColorStop(0, '#050b14'); grad.addColorStop(0.5, '#120024'); grad.addColorStop(1, '#001a2c');
+    canvasCtx.fillStyle = grad; canvasCtx.fillRect(0, 0, w, h);
 
-    // Neon Rain Streak Animation
     canvasCtx.lineWidth = 1.8;
     motionElements.forEach(p => {
       p.y += p.speedY * (state.settings.motionSpeed / 3);
       if (p.y > h) p.y = -20;
-
-      const rainGrad = canvasCtx.createLinearGradient(p.x, p.y, p.x, p.y + p.length);
-      rainGrad.addColorStop(0, 'rgba(0, 242, 254, 0)');
-      rainGrad.addColorStop(1, 'rgba(255, 0, 127, 0.8)');
-
-      canvasCtx.strokeStyle = rainGrad;
-      canvasCtx.beginPath();
-      canvasCtx.moveTo(p.x, p.y);
-      canvasCtx.lineTo(p.x - 1, p.y + p.length);
-      canvasCtx.stroke();
+      const rainGrad = canvasCtx.createLinearGradient(p.x, p.y, p.x, p.y + 25);
+      rainGrad.addColorStop(0, 'rgba(0, 242, 254, 0)'); rainGrad.addColorStop(1, 'rgba(255, 0, 127, 0.8)');
+      canvasCtx.strokeStyle = rainGrad; canvasCtx.beginPath(); canvasCtx.moveTo(p.x, p.y); canvasCtx.lineTo(p.x - 1, p.y + 25); canvasCtx.stroke();
     });
   }
 
-  // 2. Cosmic Nebula Galaxy
+  // Theme 2: Cosmic Nebula Galaxy
   function drawCosmicGalaxyScene() {
-    const w = el.bgCanvas.width;
-    const h = el.bgCanvas.height;
-
-    canvasCtx.fillStyle = '#060212';
-    canvasCtx.fillRect(0, 0, w, h);
-
-    // Swirling Nebula Orbs
+    const w = el.bgCanvas.width, h = el.bgCanvas.height;
+    canvasCtx.fillStyle = '#060212'; canvasCtx.fillRect(0, 0, w, h);
     const cx = w / 2 + Math.cos(canvasTime * 0.5) * 100;
     const cy = h / 2 + Math.sin(canvasTime * 0.5) * 60;
     const nebGrad = canvasCtx.createRadialGradient(cx, cy, 50, cx, cy, 400);
-    nebGrad.addColorStop(0, 'rgba(168, 85, 247, 0.35)');
-    nebGrad.addColorStop(0.5, 'rgba(236, 72, 153, 0.15)');
-    nebGrad.addColorStop(1, 'transparent');
-    canvasCtx.fillStyle = nebGrad;
-    canvasCtx.fillRect(0, 0, w, h);
+    nebGrad.addColorStop(0, 'rgba(168, 85, 247, 0.35)'); nebGrad.addColorStop(0.5, 'rgba(236, 72, 153, 0.15)'); nebGrad.addColorStop(1, 'transparent');
+    canvasCtx.fillStyle = nebGrad; canvasCtx.fillRect(0, 0, w, h);
 
-    // Twinkling Starfield
     motionElements.forEach(p => {
       p.alpha += Math.sin(canvasTime * 2 + p.x) * 0.02;
       canvasCtx.fillStyle = `rgba(255, 255, 255, ${Math.max(0.1, Math.min(1, p.alpha))})`;
-      canvasCtx.beginPath();
-      canvasCtx.arc(p.x, p.y, p.size * 0.6, 0, Math.PI * 2);
-      canvasCtx.fill();
+      canvasCtx.beginPath(); canvasCtx.arc(p.x, p.y, p.size * 0.6, 0, Math.PI * 2); canvasCtx.fill();
     });
   }
 
-  // 3. Cozy Lofi Rain Drops
+  // Theme 3: Cozy Lofi Rain Drops
   function drawLofiRainScene() {
-    const w = el.bgCanvas.width;
-    const h = el.bgCanvas.height;
-
-    canvasCtx.fillStyle = '#140d07';
-    canvasCtx.fillRect(0, 0, w, h);
-
-    // Warm Lofi Ambient Light Glow
+    const w = el.bgCanvas.width, h = el.bgCanvas.height;
+    canvasCtx.fillStyle = '#140d07'; canvasCtx.fillRect(0, 0, w, h);
     const warmGrad = canvasCtx.createRadialGradient(w * 0.8, h * 0.2, 20, w * 0.8, h * 0.2, 500);
-    warmGrad.addColorStop(0, 'rgba(245, 158, 11, 0.25)');
-    warmGrad.addColorStop(1, 'transparent');
-    canvasCtx.fillStyle = warmGrad;
-    canvasCtx.fillRect(0, 0, w, h);
+    warmGrad.addColorStop(0, 'rgba(245, 158, 11, 0.25)'); warmGrad.addColorStop(1, 'transparent');
+    canvasCtx.fillStyle = warmGrad; canvasCtx.fillRect(0, 0, w, h);
 
-    // Rain Glass Condensation Droplets
     motionElements.forEach(p => {
-      p.y += p.speedY * 0.3;
-      if (p.y > h) p.y = -10;
+      p.y += p.speedY * 0.3; if (p.y > h) p.y = -10;
       canvasCtx.fillStyle = 'rgba(255, 255, 255, 0.25)';
-      canvasCtx.beginPath();
-      canvasCtx.arc(p.x, p.y, p.size * 1.4, 0, Math.PI * 2);
-      canvasCtx.fill();
+      canvasCtx.beginPath(); canvasCtx.arc(p.x, p.y, p.size * 1.4, 0, Math.PI * 2); canvasCtx.fill();
     });
   }
 
-  // 4. Serene Bamboo Forest
+  // Theme 4: Serene Bamboo Forest
   function drawSereneNatureScene() {
-    const w = el.bgCanvas.width;
-    const h = el.bgCanvas.height;
-
+    const w = el.bgCanvas.width, h = el.bgCanvas.height;
     const grad = canvasCtx.createLinearGradient(0, 0, 0, h);
-    grad.addColorStop(0, '#022c22');
-    grad.addColorStop(1, '#064e3b');
-    canvasCtx.fillStyle = grad;
-    canvasCtx.fillRect(0, 0, w, h);
+    grad.addColorStop(0, '#022c22'); grad.addColorStop(1, '#064e3b');
+    canvasCtx.fillStyle = grad; canvasCtx.fillRect(0, 0, w, h);
 
-    // Floating Emerald Leaf Particles
     motionElements.forEach(p => {
-      p.x += Math.sin(canvasTime + p.y * 0.01) * 1.5;
-      p.y += p.speedY * 0.6;
-      if (p.y > h) p.y = -10;
-
+      p.x += Math.sin(canvasTime + p.y * 0.01) * 1.5; p.y += p.speedY * 0.6; if (p.y > h) p.y = -10;
       canvasCtx.fillStyle = 'rgba(16, 185, 129, 0.6)';
-      canvasCtx.beginPath();
-      canvasCtx.ellipse(p.x, p.y, p.size * 2, p.size, Math.PI / 4, 0, Math.PI * 2);
-      canvasCtx.fill();
+      canvasCtx.beginPath(); canvasCtx.ellipse(p.x, p.y, p.size * 2, p.size, Math.PI / 4, 0, Math.PI * 2); canvasCtx.fill();
     });
   }
 
-  // 5. Sunset Synthwave Grid
+  // Theme 5: Sunset Synthwave Grid
   function drawSynthwaveGridScene() {
-    const w = el.bgCanvas.width;
-    const h = el.bgCanvas.height;
-
+    const w = el.bgCanvas.width, h = el.bgCanvas.height;
     const skyGrad = canvasCtx.createLinearGradient(0, 0, 0, h * 0.65);
-    skyGrad.addColorStop(0, '#1e1b4b');
-    skyGrad.addColorStop(1, '#831843');
-    canvasCtx.fillStyle = skyGrad;
-    canvasCtx.fillRect(0, 0, w, h);
+    skyGrad.addColorStop(0, '#1e1b4b'); skyGrad.addColorStop(1, '#831843');
+    canvasCtx.fillStyle = skyGrad; canvasCtx.fillRect(0, 0, w, h);
 
-    // Glowing Sun
     const sunY = h * 0.6;
     const sunGrad = canvasCtx.createLinearGradient(0, sunY - 70, 0, sunY + 70);
-    sunGrad.addColorStop(0, '#ff7eb3');
-    sunGrad.addColorStop(1, '#ff758c');
-    canvasCtx.fillStyle = sunGrad;
-    canvasCtx.beginPath();
-    canvasCtx.arc(w / 2, sunY, 75, 0, Math.PI * 2);
-    canvasCtx.fill();
+    sunGrad.addColorStop(0, '#ff7eb3'); sunGrad.addColorStop(1, '#ff758c');
+    canvasCtx.fillStyle = sunGrad; canvasCtx.beginPath(); canvasCtx.arc(w / 2, sunY, 75, 0, Math.PI * 2); canvasCtx.fill();
 
-    // Perspective Grid Lines
-    canvasCtx.strokeStyle = 'rgba(255, 117, 140, 0.4)';
-    canvasCtx.lineWidth = 1.5;
+    canvasCtx.strokeStyle = 'rgba(255, 117, 140, 0.4)'; canvasCtx.lineWidth = 1.5;
     for (let x = -w; x < w * 2; x += 60) {
-      canvasCtx.beginPath();
-      canvasCtx.moveTo(w / 2, sunY);
-      canvasCtx.lineTo(x, h);
-      canvasCtx.stroke();
+      canvasCtx.beginPath(); canvasCtx.moveTo(w / 2, sunY); canvasCtx.lineTo(x, h); canvasCtx.stroke();
     }
   }
 
-  // 6. Organic Liquid Flow
+  // Theme 6: Organic Liquid Flow
   function drawOrganicLiquidScene() {
-    const w = el.bgCanvas.width;
-    const h = el.bgCanvas.height;
+    const w = el.bgCanvas.width, h = el.bgCanvas.height;
+    canvasCtx.fillStyle = '#0f172a'; canvasCtx.fillRect(0, 0, w, h);
 
-    canvasCtx.fillStyle = '#0f172a';
-    canvasCtx.fillRect(0, 0, w, h);
-
-    // Dynamic Morphing Fluid Waves
     for (let i = 0; i < 3; i++) {
       canvasCtx.fillStyle = i === 0 ? 'rgba(139, 92, 246, 0.25)' : i === 1 ? 'rgba(6, 182, 212, 0.2)' : 'rgba(236, 72, 153, 0.15)';
-      canvasCtx.beginPath();
-      canvasCtx.moveTo(0, h);
+      canvasCtx.beginPath(); canvasCtx.moveTo(0, h);
       for (let x = 0; x <= w; x += 40) {
         const y = Math.sin(x * 0.003 + canvasTime + i) * 60 + h * 0.5 + (i * 40);
         canvasCtx.lineTo(x, y);
       }
-      canvasCtx.lineTo(w, h);
-      canvasCtx.closePath();
-      canvasCtx.fill();
+      canvasCtx.lineTo(w, h); canvasCtx.closePath(); canvasCtx.fill();
+    }
+  }
+
+  // --- 3 NEW MOTION THEMES ---
+
+  // Theme 7: Matrix Digital Rain
+  function drawMatrixDigitalRain() {
+    const w = el.bgCanvas.width, h = el.bgCanvas.height;
+    canvasCtx.fillStyle = '#021206'; canvasCtx.fillRect(0, 0, w, h);
+    canvasCtx.font = '14px monospace';
+
+    motionElements.forEach(p => {
+      p.y += p.speedY * (state.settings.motionSpeed / 2); if (p.y > h) p.y = -20;
+      canvasCtx.fillStyle = '#22c55e';
+      canvasCtx.fillText(p.char, p.x, p.y);
+    });
+  }
+
+  // Theme 8: Midnight Fireflies Glow
+  function drawMidnightFireflies() {
+    const w = el.bgCanvas.width, h = el.bgCanvas.height;
+    canvasCtx.fillStyle = '#09090b'; canvasCtx.fillRect(0, 0, w, h);
+
+    motionElements.forEach(p => {
+      p.x += Math.sin(canvasTime + p.y * 0.05) * 1.2;
+      p.y += Math.cos(canvasTime + p.x * 0.05) * 1.2;
+      
+      const glowGrad = canvasCtx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 5);
+      glowGrad.addColorStop(0, 'rgba(234, 179, 8, 0.9)');
+      glowGrad.addColorStop(1, 'transparent');
+      canvasCtx.fillStyle = glowGrad;
+      canvasCtx.beginPath(); canvasCtx.arc(p.x, p.y, p.size * 5, 0, Math.PI * 2); canvasCtx.fill();
+    });
+  }
+
+  // Theme 9: Sunset Ocean Waves
+  function drawSunsetOceanWaves() {
+    const w = el.bgCanvas.width, h = el.bgCanvas.height;
+    const sky = canvasCtx.createLinearGradient(0, 0, 0, h);
+    sky.addColorStop(0, '#0f172a'); sky.addColorStop(0.6, '#1e3a8a'); sky.addColorStop(1, '#0284c7');
+    canvasCtx.fillStyle = sky; canvasCtx.fillRect(0, 0, w, h);
+
+    for (let i = 0; i < 4; i++) {
+      canvasCtx.fillStyle = `rgba(59, 130, 246, ${0.15 + i * 0.08})`;
+      canvasCtx.beginPath(); canvasCtx.moveTo(0, h);
+      for (let x = 0; x <= w; x += 30) {
+        const y = Math.sin(x * 0.005 + canvasTime * 1.5 + i * 1.2) * (20 + i * 10) + h * 0.6 + (i * 35);
+        canvasCtx.lineTo(x, y);
+      }
+      canvasCtx.lineTo(w, h); canvasCtx.closePath(); canvasCtx.fill();
     }
   }
 
@@ -391,14 +352,14 @@ document.addEventListener('DOMContentLoaded', () => {
     state.settings.bgDarken = el.darkenSlider.value;
   }
 
-  // --- TIMER DISPLAY & CONTROLS ---
+  // --- STABLE TIMESTAMP-BASED TIMER ENGINE (Prevents accidental reset) ---
   function updateTimerDisplay() {
     const minutes = Math.floor(state.timeLeft / 60);
     const seconds = state.timeLeft % 60;
     const formattedTime = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
     
     el.timerDisplay.textContent = formattedTime;
-    document.title = `${formattedTime} - Podomoro Time`;
+    document.title = `${formattedTime} - Its Podomoro`;
 
     const progressFraction = 1 - (state.timeLeft / state.totalDuration);
     const strokeDashoffset = 942.47 * (1 - progressFraction);
@@ -409,31 +370,31 @@ document.addEventListener('DOMContentLoaded', () => {
     if (state.timerState === 'running') return;
     
     state.timerState = 'running';
+    state.targetEndTime = Date.now() + (state.timeLeft * 1000);
+
     el.startIcon.className = 'fa-solid fa-pause';
     el.startBtnText.textContent = 'PAUSE';
-    el.timerStatusLabel.textContent = state.mode === 'pomodoro' ? 'FOCUS TIME' : 'REST TIME';
 
     state.timerId = setInterval(() => {
-      if (state.timeLeft > 0) {
-        state.timeLeft--;
-        updateTimerDisplay();
+      const now = Date.now();
+      const remainingSeconds = Math.max(0, Math.round((state.targetEndTime - now) / 1000));
 
-        if (state.mode === 'pomodoro' && state.timeLeft % 60 === 0 && state.timeLeft !== state.totalDuration) {
-          state.stats.totalFocusMinutesToday++;
-          updateHeaderStats();
-        }
-      } else {
+      state.timeLeft = remainingSeconds;
+      updateTimerDisplay();
+
+      if (remainingSeconds <= 0) {
         completeSession();
       }
-    }, 1000);
+    }, 200);
   }
 
   function pauseTimer() {
     state.timerState = 'paused';
-    clearInterval(state.timerId);
+    if (state.timerId) clearInterval(state.timerId);
+    state.timerId = null;
+
     el.startIcon.className = 'fa-solid fa-play';
     el.startBtnText.textContent = 'START';
-    el.timerStatusLabel.textContent = 'PAUSED';
   }
 
   function resetTimer() {
@@ -441,11 +402,11 @@ document.addEventListener('DOMContentLoaded', () => {
     state.timerState = 'stopped';
     state.totalDuration = state.settings[state.mode] * 60;
     state.timeLeft = state.totalDuration;
-    el.timerStatusLabel.textContent = 'READY TO FOCUS';
     updateTimerDisplay();
   }
 
   function switchMode(newMode) {
+    if (state.mode === newMode && state.timerState === 'running') return;
     state.mode = newMode;
     el.modeBtns.forEach(btn => {
       btn.classList.toggle('active', btn.dataset.mode === newMode);
@@ -459,21 +420,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (state.mode === 'pomodoro') {
       state.stats.completedSessionsToday++;
-      if (state.activeTaskId) {
-        const activeTask = state.tasks.find(t => t.id === state.activeTaskId);
-        if (activeTask) { activeTask.completedPomo++; renderTasks(); }
-      }
-
+      state.stats.totalFocusMinutesToday += state.settings.pomodoro;
       updateHeaderStats();
       saveSettingsToStorage();
-
-      const isLongBreak = state.stats.completedSessionsToday % 4 === 0;
-      switchMode(isLongBreak ? 'longBreak' : 'shortBreak');
-
-      if (state.settings.autoBreak) startTimer();
+      switchMode('shortBreak');
     } else {
       switchMode('pomodoro');
-      if (state.settings.autoPomo) startTimer();
     }
   }
 
@@ -481,38 +433,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     const osc = audioCtx.createOscillator();
     const gain = audioCtx.createGain();
-
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-
-    if (state.settings.alarmSound === 'chime') {
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(587.33, audioCtx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.6);
-    } else if (state.settings.alarmSound === 'digital') {
-      osc.type = 'square';
-      osc.frequency.setValueAtTime(800, audioCtx.currentTime);
-    } else {
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(432, audioCtx.currentTime);
-    }
-
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(587.33, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.6);
     gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.2);
-
-    osc.start();
-    osc.stop(audioCtx.currentTime + 1.2);
+    osc.start(); osc.stop(audioCtx.currentTime + 1.2);
   }
 
   // --- TASK MANAGER ---
-  function addTask(title, estPomo) {
-    state.tasks.push({
-      id: Date.now().toString(),
-      title,
-      estPomo: parseInt(estPomo) || 1,
-      completedPomo: 0,
-      completed: false
-    });
+  function addTask(title) {
+    state.tasks.push({ id: Date.now().toString(), title, completed: false });
     saveSettingsToStorage();
     renderTasks();
   }
@@ -524,18 +456,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function deleteTask(id) {
     state.tasks = state.tasks.filter(t => t.id !== id);
-    if (state.activeTaskId === id) {
-      state.activeTaskId = null;
-      el.activeTaskTitle.textContent = 'Ready for Deep Focus';
-    }
     saveSettingsToStorage();
-    renderTasks();
-  }
-
-  function setActiveFocusTask(id) {
-    state.activeTaskId = id;
-    const task = state.tasks.find(t => t.id === id);
-    if (task) el.activeTaskTitle.textContent = task.title;
     renderTasks();
   }
 
@@ -547,23 +468,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     state.tasks.forEach(task => {
       const li = document.createElement('li');
-      li.className = `task-item ${task.completed ? 'completed' : ''} ${state.activeTaskId === task.id ? 'active-focus' : ''}`;
+      li.className = `task-item ${task.completed ? 'completed' : ''}`;
       li.innerHTML = `
         <div class="task-left">
           <div class="checkbox-custom" data-id="${task.id}">${task.completed ? '<i class="fa-solid fa-check"></i>' : ''}</div>
           <span class="task-title-text">${escapeHTML(task.title)}</span>
         </div>
-        <div class="task-right">
-          <span class="task-pomo-count">${task.completedPomo}/${task.estPomo}</span>
-          <button class="btn-task-action btn-select-task" data-id="${task.id}"><i class="fa-solid fa-crosshairs"></i></button>
-          <button class="btn-task-action btn-delete-task" data-id="${task.id}"><i class="fa-solid fa-trash-can"></i></button>
-        </div>
+        <button class="btn-task-action btn-delete-task" data-id="${task.id}"><i class="fa-solid fa-trash-can"></i></button>
       `;
 
       li.querySelector('.checkbox-custom').addEventListener('click', () => toggleTaskComplete(task.id));
-      li.querySelector('.btn-select-task').addEventListener('click', () => setActiveFocusTask(task.id));
       li.querySelector('.btn-delete-task').addEventListener('click', () => deleteTask(task.id));
-
       el.taskList.appendChild(li);
     });
   }
@@ -576,30 +491,6 @@ document.addEventListener('DOMContentLoaded', () => {
     el.streakCount.textContent = state.stats.currentStreak;
   }
 
-  function renderAnalyticsModal() {
-    el.statsTotalSessions.textContent = state.stats.completedSessionsToday;
-    el.statsTotalHours.textContent = `${(state.stats.totalFocusMinutesToday / 60).toFixed(1)} hrs`;
-    el.statsBestStreak.textContent = `${state.stats.bestStreak} days`;
-    
-    const totalT = state.tasks.length;
-    const compT = state.tasks.filter(t => t.completed).length;
-    el.statsTaskRatio.textContent = `${totalT === 0 ? 0 : Math.round((compT / totalT) * 100)}%`;
-
-    el.weeklyChart.innerHTML = '';
-    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    const maxVal = Math.max(...state.stats.weeklyMinutes, 120);
-
-    state.stats.weeklyMinutes.forEach((mins, i) => {
-      const barWrapper = document.createElement('div');
-      barWrapper.className = 'chart-bar-wrapper';
-      barWrapper.innerHTML = `
-        <div class="chart-bar-fill" style="height: ${Math.max((mins / maxVal) * 100, 5)}%;"></div>
-        <span class="chart-bar-label">${days[i]}</span>
-      `;
-      el.weeklyChart.appendChild(barWrapper);
-    });
-  }
-
   // --- EVENT LISTENERS ---
   function setupEventListeners() {
     el.btnStart.addEventListener('click', () => state.timerState === 'running' ? pauseTimer() : startTimer());
@@ -608,7 +499,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     el.modeBtns.forEach(btn => btn.addEventListener('click', () => switchMode(btn.dataset.mode)));
 
-    // Task Panel Expand / Collapse
     el.btnToggleTaskPanel.addEventListener('click', () => {
       el.taskPanelContent.classList.toggle('hidden');
       el.taskChevron.className = el.taskPanelContent.classList.contains('hidden') ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down';
@@ -617,31 +507,23 @@ document.addEventListener('DOMContentLoaded', () => {
     el.addTaskForm.addEventListener('submit', (e) => {
       e.preventDefault();
       const title = el.taskTitleInput.value.trim();
-      if (title) { addTask(title, el.taskPomoEst.value); el.taskTitleInput.value = ''; }
+      if (title) { addTask(title); el.taskTitleInput.value = ''; }
     });
 
-    // Zen Mode Toggle (Clean Screen)
-    el.btnZenMode.addEventListener('click', () => {
-      el.app.classList.toggle('zen-clean-mode');
-    });
+    el.btnZenMode.addEventListener('click', () => el.app.classList.toggle('zen-clean-mode'));
 
-    // Master Control Drawer
     el.btnMasterMenu.addEventListener('click', () => el.modalMaster.classList.add('active'));
     el.btnCloseMaster.addEventListener('click', () => el.modalMaster.classList.remove('active'));
 
-    // Master Inner Tabs
     el.masterTabs.forEach(tab => {
       tab.addEventListener('click', () => {
         el.masterTabs.forEach(t => t.classList.remove('active'));
         el.masterTabContents.forEach(c => c.classList.remove('active'));
         tab.classList.add('active');
-        const targetId = tab.dataset.tab;
-        document.getElementById(targetId).classList.add('active');
-        if (targetId === 'tab-stats') renderAnalyticsModal();
+        document.getElementById(tab.dataset.tab).classList.add('active');
       });
     });
 
-    // Theme Cards
     el.themeCards.forEach(card => {
       card.addEventListener('click', () => applyTheme(card.dataset.theme));
     });
@@ -649,16 +531,13 @@ document.addEventListener('DOMContentLoaded', () => {
     el.speedSlider.addEventListener('input', applyOverlayEffects);
     el.darkenSlider.addEventListener('input', applyOverlayEffects);
 
-    // Save Settings
+    // Save Settings ONLY updates settings WITHOUT resetting running timer!
     el.btnSaveSettings.addEventListener('click', () => {
       state.settings.pomodoro = parseInt(el.settingPomoTime.value) || 25;
       state.settings.shortBreak = parseInt(el.settingShortBreak.value) || 5;
       state.settings.longBreak = parseInt(el.settingLongBreak.value) || 15;
-      state.settings.autoBreak = el.settingAutoBreak.checked;
-      state.settings.autoPomo = el.settingAutoPomo.checked;
-      state.settings.alarmSound = el.settingSoundAlarm.value;
       saveSettingsToStorage();
-      resetTimer();
+      if (state.timerState !== 'running') resetTimer();
       el.modalMaster.classList.remove('active');
     });
   }
