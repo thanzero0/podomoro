@@ -4,15 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Its Podomoro</title>
-  <meta name="description" content="Its Podomoro - Minimalist Aesthetic Focus Timer.">
+  <meta name="description" content="Its Podomoro - Minimalist Cyber Focus Timer with 6 Clock Styles and 12 Motion Themes.">
   
-  <!-- Favicon Tab Icon -->
+  <!-- High-End Futuristic SVG Favicon Tab Icon -->
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&family=Orbitron:wght@500;700;900&family=Cinzel:wght@700&display=swap" rel="stylesheet">
   
   <!-- FontAwesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -20,9 +20,9 @@
   <!-- Custom Stylesheet -->
   <link rel="stylesheet" href="style.css">
 </head>
-<body class="theme-cyberpunk">
+<body class="theme-cyberpunk clock-style-neon">
 
-  <!-- Interactive Organic Canvas Motion Layer (9 Motion Scenes) -->
+  <!-- Interactive Organic Canvas Motion Layer (12 Motion Scenes) -->
   <div id="bg-container">
     <canvas id="bg-canvas"></canvas>
     <div class="bg-overlay"></div>
@@ -60,10 +60,11 @@
       </div>
     </header>
 
-    <!-- Center Timer Card -->
+    <!-- Center Timer Display Container -->
     <main class="main-content-centered">
       
-      <div class="timer-card glass-card">
+      <!-- Primary Timer Card Shell -->
+      <div class="timer-card glass-card" id="timer-card-element">
 
         <!-- Mode Switcher Tabs -->
         <div class="mode-tabs">
@@ -72,8 +73,10 @@
           <button class="mode-btn" data-mode="longBreak">Long Break</button>
         </div>
 
-        <!-- Glowing Circular Progress Ring -->
-        <div class="timer-display-wrapper">
+        <!-- Clock Face Container supporting 6 Styles -->
+        <div class="clock-container" id="clock-container">
+          
+          <!-- Ring Progress Graphics -->
           <svg class="progress-ring" width="340" height="340" viewBox="0 0 340 340">
             <circle class="progress-ring__background" stroke="rgba(255, 255, 255, 0.06)" stroke-width="10" fill="transparent" r="150" cx="170" cy="170"/>
             <circle class="progress-ring__circle" stroke="url(#ring-gradient)" stroke-width="12" stroke-linecap="round" fill="transparent" r="150" cx="170" cy="170"/>
@@ -95,6 +98,7 @@
               <span class="dot"></span>
             </div>
           </div>
+
         </div>
 
         <!-- Main Timer Controls -->
@@ -156,12 +160,12 @@
       <div class="modal-body master-body">
         
         <div class="master-tabs">
-          <button class="master-tab active" data-tab="tab-themes"><i class="fa-solid fa-palette"></i> 9 Themes</button>
-          <button class="master-tab" data-tab="tab-audio"><i class="fa-solid fa-volume-high"></i> Ambience</button>
+          <button class="master-tab active" data-tab="tab-themes"><i class="fa-solid fa-palette"></i> 12 Themes</button>
+          <button class="master-tab" data-tab="tab-clocks"><i class="fa-solid fa-stopwatch"></i> 6 Clock Styles</button>
           <button class="master-tab" data-tab="tab-timer"><i class="fa-solid fa-clock"></i> Durations</button>
         </div>
 
-        <!-- TAB 1: 9 Dynamic Motion Themes (Original 6 + 3 New) -->
+        <!-- TAB 1: 12 Dynamic Motion Themes -->
         <div class="master-tab-content active" id="tab-themes">
           <div class="theme-grid">
             <div class="theme-card active" data-theme="cyberpunk">
@@ -194,20 +198,35 @@
               <div class="theme-info"><h4>6. Fluid Aurora</h4></div>
             </div>
 
-            <!-- 3 NEW ANIMATIONS -->
             <div class="theme-card" data-theme="matrix">
               <div class="theme-preview theme-matrix-preview"></div>
-              <div class="theme-info"><h4>7. Matrix Digital</h4></div>
+              <div class="theme-info"><h4>7. Matrix Code</h4></div>
             </div>
 
             <div class="theme-card" data-theme="fireflies">
               <div class="theme-preview theme-fireflies-preview"></div>
-              <div class="theme-info"><h4>8. Midnight Glow</h4></div>
+              <div class="theme-info"><h4>8. Fireflies Glow</h4></div>
             </div>
 
             <div class="theme-card" data-theme="waves">
               <div class="theme-preview theme-waves-preview"></div>
-              <div class="theme-info"><h4>9. Sunset Wave</h4></div>
+              <div class="theme-info"><h4>9. Sunset Waves</h4></div>
+            </div>
+
+            <!-- 3 NEW ANIMATIONS -->
+            <div class="theme-card" data-theme="vortex">
+              <div class="theme-preview theme-vortex-preview"></div>
+              <div class="theme-info"><h4>10. Cyber Vortex</h4></div>
+            </div>
+
+            <div class="theme-card" data-theme="plasma">
+              <div class="theme-preview theme-plasma-preview"></div>
+              <div class="theme-info"><h4>11. Plasma Storm</h4></div>
+            </div>
+
+            <div class="theme-card" data-theme="sunbeams">
+              <div class="theme-preview theme-sunbeams-preview"></div>
+              <div class="theme-info"><h4>12. Sunbeams</h4></div>
             </div>
           </div>
 
@@ -223,24 +242,38 @@
           </div>
         </div>
 
-        <!-- TAB 2: Audio Ambience Mixer -->
-        <div class="master-tab-content" id="tab-audio">
-          <div class="audio-track-list">
-            <div class="audio-track-item">
-              <div class="track-info"><i class="fa-solid fa-cloud-showers-heavy"></i> <span>Rain</span></div>
-              <input type="range" class="audio-track-vol" data-track="rain" min="0" max="100" value="0">
+        <!-- TAB 2: 6 Clock Styles Selector -->
+        <div class="master-tab-content" id="tab-clocks">
+          <p class="modal-subtext">Choose your preferred Pomodoro clock design style:</p>
+          <div class="clock-styles-grid">
+            <div class="clock-style-card active" data-clock="neon">
+              <div class="clock-style-preview clock-style-neon-preview">25:00</div>
+              <h4>1. Cyber Ring</h4>
             </div>
-            <div class="audio-track-item">
-              <div class="track-info"><i class="fa-solid fa-water"></i> <span>Waves</span></div>
-              <input type="range" class="audio-track-vol" data-track="waves" min="0" max="100" value="0">
+
+            <div class="clock-style-card" data-clock="digital">
+              <div class="clock-style-preview clock-style-digital-preview">25:00</div>
+              <h4>2. Sci-Fi Orbitron</h4>
             </div>
-            <div class="audio-track-item">
-              <div class="track-info"><i class="fa-solid fa-tree"></i> <span>Forest</span></div>
-              <input type="range" class="audio-track-vol" data-track="forest" min="0" max="100" value="0">
+
+            <div class="clock-style-card" data-clock="minimal">
+              <div class="clock-style-preview clock-style-minimal-preview">25:00</div>
+              <h4>3. Clean Minimal</h4>
             </div>
-            <div class="audio-track-item">
-              <div class="track-info"><i class="fa-solid fa-wind"></i> <span>White Noise</span></div>
-              <input type="range" class="audio-track-vol" data-track="space" min="0" max="100" value="0">
+
+            <div class="clock-style-card" data-clock="retro">
+              <div class="clock-style-preview clock-style-retro-preview">25:00</div>
+              <h4>4. Retro Flip</h4>
+            </div>
+
+            <div class="clock-style-card" data-clock="minimalist-circle">
+              <div class="clock-style-preview clock-style-circle-preview">25:00</div>
+              <h4>5. Thin Circle</h4>
+            </div>
+
+            <div class="clock-style-card" data-clock="classic-roman">
+              <div class="clock-style-preview clock-style-roman-preview">25:00</div>
+              <h4>6. Classic Elegant</h4>
             </div>
           </div>
         </div>
@@ -271,7 +304,7 @@
     </div>
   </div>
 
-  <!-- JS Core Engine -->
-  <script src="app.js"></script>
+  <!-- JS Core Engine Modules -->
+  <script type="module" src="app.js"></script>
 </body>
 </html>

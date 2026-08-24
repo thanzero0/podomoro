@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Its Podomoro - Clean Minimalist Styling & 9 Themes Preview Gradients
+   Its Podomoro - Ultra Clean CSS Design System (12 Themes & 6 Clock Styles)
    ========================================================================== */
 
 :root {
@@ -17,9 +17,10 @@
   
   --font-heading: 'Outfit', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
+  --font-clock: 'JetBrains Mono', monospace;
 }
 
-/* Theme Presets */
+/* 12 Theme Color Presets */
 body.theme-cyberpunk { --accent-color: #00f2fe; --accent-secondary: #ff007f; --accent-glow: rgba(255, 0, 127, 0.5); }
 body.theme-galaxy { --accent-color: #a855f7; --accent-secondary: #ec4899; --accent-glow: rgba(168, 85, 247, 0.5); }
 body.theme-lofi { --accent-color: #f59e0b; --accent-secondary: #ef4444; --accent-glow: rgba(245, 158, 11, 0.5); }
@@ -29,6 +30,73 @@ body.theme-liquid { --accent-color: #8b5cf6; --accent-secondary: #06b6d4; --acce
 body.theme-matrix { --accent-color: #22c55e; --accent-secondary: #10b981; --accent-glow: rgba(34, 197, 94, 0.5); }
 body.theme-fireflies { --accent-color: #eab308; --accent-secondary: #f97316; --accent-glow: rgba(234, 179, 8, 0.5); }
 body.theme-waves { --accent-color: #3b82f6; --accent-secondary: #06b6d4; --accent-glow: rgba(59, 130, 246, 0.5); }
+body.theme-vortex { --accent-color: #00f2fe; --accent-secondary: #a855f7; --accent-glow: rgba(0, 242, 254, 0.5); }
+body.theme-plasma { --accent-color: #ff007f; --accent-secondary: #00f2fe; --accent-glow: rgba(255, 0, 127, 0.5); }
+body.theme-sunbeams { --accent-color: #fbbf24; --accent-secondary: #f59e0b; --accent-glow: rgba(251, 191, 36, 0.5); }
+
+/* --- 6 DISTINCT CLOCK DISPLAY STYLES --- */
+
+/* Clock 1: Cyber Ring (Default) */
+body.clock-style-neon .timer-time {
+  font-family: var(--font-mono);
+  font-size: 4.8rem;
+  font-weight: 700;
+  letter-spacing: -2px;
+  text-shadow: 0 0 35px var(--accent-glow);
+}
+
+/* Clock 2: Sci-Fi Orbitron */
+body.clock-style-digital .timer-time {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 4.4rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: var(--accent-color);
+  text-shadow: 0 0 20px var(--accent-color);
+}
+
+/* Clock 3: Clean Minimal (No Ring Fill) */
+body.clock-style-minimal .progress-ring {
+  opacity: 0.15;
+}
+body.clock-style-minimal .timer-time {
+  font-family: var(--font-heading);
+  font-size: 5.5rem;
+  font-weight: 300;
+  letter-spacing: -3px;
+}
+
+/* Clock 4: Retro Flip Box */
+body.clock-style-retro .timer-time {
+  font-family: var(--font-mono);
+  font-size: 4.2rem;
+  font-weight: 700;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 12px 24px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.8);
+}
+
+/* Clock 5: Thin Circle */
+body.clock-style-minimalist-circle .progress-ring__circle {
+  stroke-width: 4px;
+}
+body.clock-style-minimalist-circle .timer-time {
+  font-family: var(--font-heading);
+  font-size: 5rem;
+  font-weight: 500;
+}
+
+/* Clock 6: Classic Elegant Roman */
+body.clock-style-classic-roman .timer-time {
+  font-family: 'Cinzel', serif;
+  font-size: 4.5rem;
+  font-weight: 700;
+  letter-spacing: 4px;
+  color: #fff;
+  text-shadow: 0 4px 15px rgba(0, 0, 0, 0.8);
+}
 
 * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
 html, body { width: 100%; height: 100%; overflow: hidden; font-family: var(--font-heading); color: var(--text-main); background-color: #050811; }
@@ -64,12 +132,10 @@ html, body { width: 100%; height: 100%; overflow: hidden; font-family: var(--fon
 .mode-btn { background: transparent; border: none; color: var(--text-muted); padding: 8px 20px; border-radius: 50px; font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: all 0.3s ease; }
 .mode-btn.active { background: linear-gradient(135deg, var(--accent-color), var(--accent-secondary)); color: #fff; box-shadow: 0 4px 20px var(--accent-glow); }
 
-.timer-display-wrapper { position: relative; width: 310px; height: 310px; display: flex; align-items: center; justify-content: center; margin: 20px 0; }
+.clock-container { position: relative; width: 310px; height: 310px; display: flex; align-items: center; justify-content: center; margin: 20px 0; }
 .progress-ring { transform: rotate(-90deg); }
 .progress-ring__circle { transition: stroke-dashoffset 0.5s ease-in-out; stroke-dasharray: 942.47; stroke-dashoffset: 0; filter: drop-shadow(0 0 16px var(--accent-glow)); }
 .timer-inner { position: absolute; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; }
-
-.timer-time { font-family: var(--font-mono); font-size: 4.8rem; font-weight: 700; letter-spacing: -2px; text-shadow: 0 0 35px rgba(255, 255, 255, 0.3); line-height: 1; }
 
 .session-round-dots { display: flex; gap: 8px; }
 .session-round-dots .dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255, 255, 255, 0.2); transition: all 0.3s ease; }
@@ -114,11 +180,11 @@ html, body { width: 100%; height: 100%; overflow: hidden; font-family: var(--fon
 .master-tab-content { display: none; }
 .master-tab-content.active { display: block; }
 
-/* 9 Theme Grid */
-.theme-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
+/* 12 Theme Grid Previews */
+.theme-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; max-height: 280px; overflow-y: auto; }
 .theme-card { background: rgba(255, 255, 255, 0.04); border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 14px; overflow: hidden; cursor: pointer; transition: all 0.3s ease; }
 .theme-card.active { border-color: var(--accent-color); box-shadow: 0 0 15px var(--accent-glow); }
-.theme-preview { height: 60px; width: 100%; }
+.theme-preview { height: 50px; width: 100%; }
 
 .theme-cyberpunk-preview { background: linear-gradient(135deg, #050b14, #1f0036, #00f2fe); }
 .theme-galaxy-preview { background: linear-gradient(135deg, #090314, #3b0764, #ec4899); }
@@ -129,6 +195,9 @@ html, body { width: 100%; height: 100%; overflow: hidden; font-family: var(--fon
 .theme-matrix-preview { background: linear-gradient(135deg, #022c22, #052e16, #22c55e); }
 .theme-fireflies-preview { background: linear-gradient(135deg, #18181b, #451a03, #eab308); }
 .theme-waves-preview { background: linear-gradient(135deg, #172554, #1e3a8a, #3b82f6); }
+.theme-vortex-preview { background: linear-gradient(135deg, #04020a, #120024, #00f2fe); }
+.theme-plasma-preview { background: linear-gradient(135deg, #0a0014, #ff007f, #00f2fe); }
+.theme-sunbeams-preview { background: linear-gradient(135deg, #1c1305, #78350f, #fbbf24); }
 
 .theme-info { padding: 6px; text-align: center; }
 .theme-info h4 { font-size: 0.78rem; }
@@ -136,10 +205,20 @@ html, body { width: 100%; height: 100%; overflow: hidden; font-family: var(--fon
 .theme-settings-panel { display: flex; gap: 12px; background: rgba(0, 0, 0, 0.2); padding: 10px; border-radius: 10px; }
 .setting-item { flex: 1; display: flex; flex-direction: column; gap: 4px; font-size: 0.75rem; }
 
-.audio-track-list { display: flex; flex-direction: column; gap: 10px; }
-.audio-track-item { display: flex; align-items: center; justify-content: space-between; background: rgba(255, 255, 255, 0.04); padding: 8px 12px; border-radius: 10px; }
-.track-info { display: flex; align-items: center; gap: 8px; font-size: 0.82rem; }
-.audio-track-vol { accent-color: var(--accent-color); width: 120px; }
+/* 6 Clock Style Cards Grid */
+.clock-styles-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 14px; }
+.clock-style-card { background: rgba(255, 255, 255, 0.04); border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 14px; padding: 12px; text-align: center; cursor: pointer; transition: all 0.3s ease; }
+.clock-style-card.active { border-color: var(--accent-color); box-shadow: 0 0 15px var(--accent-glow); }
+
+.clock-style-preview { font-size: 1.4rem; font-weight: 700; margin-bottom: 6px; }
+.clock-style-neon-preview { font-family: 'JetBrains Mono', monospace; color: var(--accent-color); }
+.clock-style-digital-preview { font-family: 'Orbitron', sans-serif; color: var(--accent-color); }
+.clock-style-minimal-preview { font-family: 'Outfit', sans-serif; font-weight: 300; }
+.clock-style-retro-preview { font-family: 'JetBrains Mono', monospace; background: rgba(0,0,0,0.5); padding: 4px; border-radius: 6px; }
+.clock-style-circle-preview { font-family: 'Outfit', sans-serif; font-weight: 500; }
+.clock-style-roman-preview { font-family: 'Cinzel', serif; }
+
+.clock-style-card h4 { font-size: 0.8rem; color: var(--text-muted); }
 
 .duration-inputs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
 .input-field { display: flex; flex-direction: column; gap: 4px; }

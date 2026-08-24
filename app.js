@@ -1,17 +1,19 @@
 /**
- * Its Podomoro - Ultra Secure & Protected Timer Engine
+ * Its Podomoro - Modular Engine System
  */
+
+import { animations } from './js/animations/scenes.js';
 
 document.addEventListener('DOMContentLoaded', () => {
 
-  // --- SAFE STATE & ENGINE LOCKS ---
+  // --- SAFE & ACCURATE ENGINE STATE ---
   const state = {
     mode: 'pomodoro', // 'pomodoro' | 'shortBreak' | 'longBreak'
     timerState: 'stopped', // 'stopped' | 'running' | 'paused'
     timeLeft: 25 * 60,
     totalDuration: 25 * 60,
     timerId: null,
-    targetEndTime: null, // Robust Timestamp-based countdown
+    targetEndTime: null,
     
     // User Settings
     settings: {
@@ -19,6 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
       shortBreak: 5,
       longBreak: 15,
       theme: 'cyberpunk',
+      clockStyle: 'neon', // 6 Clock Styles
       motionSpeed: 5,
       bgDarken: 40
     },
@@ -31,10 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
       completedSessionsToday: 0,
       totalFocusMinutesToday: 0,
       currentStreak: 1
-    },
-
-    // Audio Ambience Track Volumes
-    ambientTracks: { rain: 0, waves: 0, forest: 0, space: 0 }
+    }
   };
 
   // --- DOM ELEMENTS ---
@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
     bgCanvas: document.getElementById('bg-canvas'),
     bgOverlay: document.querySelector('.bg-overlay'),
     
-    // Timer Display
+    // Timer Display & Clock Card
     timerDisplay: document.getElementById('timer-display'),
     ringCircle: document.querySelector('.progress-ring__circle'),
     modeBtns: document.querySelectorAll('.mode-btn'),
@@ -79,11 +79,11 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Themes & Sliders
     themeCards: document.querySelectorAll('.theme-card'),
+    clockStyleCards: document.querySelectorAll('.clock-style-card'),
     speedSlider: document.getElementById('speed-slider'),
     darkenSlider: document.getElementById('darken-slider'),
     
-    // Audio Tracks & Settings
-    audioTrackVols: document.querySelectorAll('.audio-track-vol'),
+    // Settings
     settingPomoTime: document.getElementById('setting-pomo-time'),
     settingShortBreak: document.getElementById('setting-short-break'),
     settingLongBreak: document.getElementById('setting-long-break'),
@@ -95,16 +95,17 @@ document.addEventListener('DOMContentLoaded', () => {
     loadLocalStorage();
     initGenerativeMotionEngine();
     applyTheme(state.settings.theme);
+    applyClockStyle(state.settings.clockStyle);
     updateTimerDisplay();
     renderTasks();
     updateHeaderStats();
     setupEventListeners();
 
-    // Prevent accidental browser tab close / refresh when timer is running
+    // Guard against accidental tab close
     window.addEventListener('beforeunload', (e) => {
       if (state.timerState === 'running') {
         e.preventDefault();
-        e.returnValue = 'Timer is currently running. Are you sure you want to leave?';
+        e.returnValue = 'Timer is active!';
         return e.returnValue;
       }
     });
@@ -145,9 +146,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // --- 9 GENERATIVE ORGANIC MOTION THEMES (HTML5 CANVAS ENGINE) ---
+  // --- 12 MODULAR ANIMATION ENGINE ---
   let canvasCtx = null;
-  let animFrameId = null;
   let motionElements = [];
   let canvasTime = 0;
 
@@ -166,20 +166,10 @@ document.addEventListener('DOMContentLoaded', () => {
       canvasTime += (state.settings.motionSpeed / 5) * 0.015;
       canvasCtx.clearRect(0, 0, el.bgCanvas.width, el.bgCanvas.height);
 
-      switch (state.settings.theme) {
-        case 'cyberpunk': drawCyberpunkNeonScene(); break;
-        case 'galaxy': drawCosmicGalaxyScene(); break;
-        case 'lofi': drawLofiRainScene(); break;
-        case 'nature': drawSereneNatureScene(); break;
-        case 'synthwave': drawSynthwaveGridScene(); break;
-        case 'liquid': drawOrganicLiquidScene(); break;
-        case 'matrix': drawMatrixDigitalRain(); break;
-        case 'fireflies': drawMidnightFireflies(); break;
-        case 'waves': drawSunsetOceanWaves(); break;
-        default: drawCyberpunkNeonScene(); break;
-      }
+      const renderFn = animations[state.settings.theme] || animations.cyberpunk;
+      renderFn(canvasCtx, el.bgCanvas.width, el.bgCanvas.height, motionElements, canvasTime, state.settings.motionSpeed);
 
-      animFrameId = requestAnimationFrame(renderLoop);
+      requestAnimationFrame(renderLoop);
     }
     renderLoop();
   }
@@ -202,161 +192,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Theme 1: Cyberpunk Neon Rain
-  function drawCyberpunkNeonScene() {
-    const w = el.bgCanvas.width, h = el.bgCanvas.height;
-    const grad = canvasCtx.createLinearGradient(0, 0, w, h);
-    grad.addColorStop(0, '#050b14'); grad.addColorStop(0.5, '#120024'); grad.addColorStop(1, '#001a2c');
-    canvasCtx.fillStyle = grad; canvasCtx.fillRect(0, 0, w, h);
-
-    canvasCtx.lineWidth = 1.8;
-    motionElements.forEach(p => {
-      p.y += p.speedY * (state.settings.motionSpeed / 3);
-      if (p.y > h) p.y = -20;
-      const rainGrad = canvasCtx.createLinearGradient(p.x, p.y, p.x, p.y + 25);
-      rainGrad.addColorStop(0, 'rgba(0, 242, 254, 0)'); rainGrad.addColorStop(1, 'rgba(255, 0, 127, 0.8)');
-      canvasCtx.strokeStyle = rainGrad; canvasCtx.beginPath(); canvasCtx.moveTo(p.x, p.y); canvasCtx.lineTo(p.x - 1, p.y + 25); canvasCtx.stroke();
-    });
-  }
-
-  // Theme 2: Cosmic Nebula Galaxy
-  function drawCosmicGalaxyScene() {
-    const w = el.bgCanvas.width, h = el.bgCanvas.height;
-    canvasCtx.fillStyle = '#060212'; canvasCtx.fillRect(0, 0, w, h);
-    const cx = w / 2 + Math.cos(canvasTime * 0.5) * 100;
-    const cy = h / 2 + Math.sin(canvasTime * 0.5) * 60;
-    const nebGrad = canvasCtx.createRadialGradient(cx, cy, 50, cx, cy, 400);
-    nebGrad.addColorStop(0, 'rgba(168, 85, 247, 0.35)'); nebGrad.addColorStop(0.5, 'rgba(236, 72, 153, 0.15)'); nebGrad.addColorStop(1, 'transparent');
-    canvasCtx.fillStyle = nebGrad; canvasCtx.fillRect(0, 0, w, h);
-
-    motionElements.forEach(p => {
-      p.alpha += Math.sin(canvasTime * 2 + p.x) * 0.02;
-      canvasCtx.fillStyle = `rgba(255, 255, 255, ${Math.max(0.1, Math.min(1, p.alpha))})`;
-      canvasCtx.beginPath(); canvasCtx.arc(p.x, p.y, p.size * 0.6, 0, Math.PI * 2); canvasCtx.fill();
-    });
-  }
-
-  // Theme 3: Cozy Lofi Rain Drops
-  function drawLofiRainScene() {
-    const w = el.bgCanvas.width, h = el.bgCanvas.height;
-    canvasCtx.fillStyle = '#140d07'; canvasCtx.fillRect(0, 0, w, h);
-    const warmGrad = canvasCtx.createRadialGradient(w * 0.8, h * 0.2, 20, w * 0.8, h * 0.2, 500);
-    warmGrad.addColorStop(0, 'rgba(245, 158, 11, 0.25)'); warmGrad.addColorStop(1, 'transparent');
-    canvasCtx.fillStyle = warmGrad; canvasCtx.fillRect(0, 0, w, h);
-
-    motionElements.forEach(p => {
-      p.y += p.speedY * 0.3; if (p.y > h) p.y = -10;
-      canvasCtx.fillStyle = 'rgba(255, 255, 255, 0.25)';
-      canvasCtx.beginPath(); canvasCtx.arc(p.x, p.y, p.size * 1.4, 0, Math.PI * 2); canvasCtx.fill();
-    });
-  }
-
-  // Theme 4: Serene Bamboo Forest
-  function drawSereneNatureScene() {
-    const w = el.bgCanvas.width, h = el.bgCanvas.height;
-    const grad = canvasCtx.createLinearGradient(0, 0, 0, h);
-    grad.addColorStop(0, '#022c22'); grad.addColorStop(1, '#064e3b');
-    canvasCtx.fillStyle = grad; canvasCtx.fillRect(0, 0, w, h);
-
-    motionElements.forEach(p => {
-      p.x += Math.sin(canvasTime + p.y * 0.01) * 1.5; p.y += p.speedY * 0.6; if (p.y > h) p.y = -10;
-      canvasCtx.fillStyle = 'rgba(16, 185, 129, 0.6)';
-      canvasCtx.beginPath(); canvasCtx.ellipse(p.x, p.y, p.size * 2, p.size, Math.PI / 4, 0, Math.PI * 2); canvasCtx.fill();
-    });
-  }
-
-  // Theme 5: Sunset Synthwave Grid
-  function drawSynthwaveGridScene() {
-    const w = el.bgCanvas.width, h = el.bgCanvas.height;
-    const skyGrad = canvasCtx.createLinearGradient(0, 0, 0, h * 0.65);
-    skyGrad.addColorStop(0, '#1e1b4b'); skyGrad.addColorStop(1, '#831843');
-    canvasCtx.fillStyle = skyGrad; canvasCtx.fillRect(0, 0, w, h);
-
-    const sunY = h * 0.6;
-    const sunGrad = canvasCtx.createLinearGradient(0, sunY - 70, 0, sunY + 70);
-    sunGrad.addColorStop(0, '#ff7eb3'); sunGrad.addColorStop(1, '#ff758c');
-    canvasCtx.fillStyle = sunGrad; canvasCtx.beginPath(); canvasCtx.arc(w / 2, sunY, 75, 0, Math.PI * 2); canvasCtx.fill();
-
-    canvasCtx.strokeStyle = 'rgba(255, 117, 140, 0.4)'; canvasCtx.lineWidth = 1.5;
-    for (let x = -w; x < w * 2; x += 60) {
-      canvasCtx.beginPath(); canvasCtx.moveTo(w / 2, sunY); canvasCtx.lineTo(x, h); canvasCtx.stroke();
-    }
-  }
-
-  // Theme 6: Organic Liquid Flow
-  function drawOrganicLiquidScene() {
-    const w = el.bgCanvas.width, h = el.bgCanvas.height;
-    canvasCtx.fillStyle = '#0f172a'; canvasCtx.fillRect(0, 0, w, h);
-
-    for (let i = 0; i < 3; i++) {
-      canvasCtx.fillStyle = i === 0 ? 'rgba(139, 92, 246, 0.25)' : i === 1 ? 'rgba(6, 182, 212, 0.2)' : 'rgba(236, 72, 153, 0.15)';
-      canvasCtx.beginPath(); canvasCtx.moveTo(0, h);
-      for (let x = 0; x <= w; x += 40) {
-        const y = Math.sin(x * 0.003 + canvasTime + i) * 60 + h * 0.5 + (i * 40);
-        canvasCtx.lineTo(x, y);
-      }
-      canvasCtx.lineTo(w, h); canvasCtx.closePath(); canvasCtx.fill();
-    }
-  }
-
-  // Theme 7: Matrix Digital Rain
-  function drawMatrixDigitalRain() {
-    const w = el.bgCanvas.width, h = el.bgCanvas.height;
-    canvasCtx.fillStyle = '#021206'; canvasCtx.fillRect(0, 0, w, h);
-    canvasCtx.font = '14px monospace';
-
-    motionElements.forEach(p => {
-      p.y += p.speedY * (state.settings.motionSpeed / 2); if (p.y > h) p.y = -20;
-      canvasCtx.fillStyle = '#22c55e';
-      canvasCtx.fillText(p.char, p.x, p.y);
-    });
-  }
-
-  // Theme 8: Midnight Fireflies Glow
-  function drawMidnightFireflies() {
-    const w = el.bgCanvas.width, h = el.bgCanvas.height;
-    canvasCtx.fillStyle = '#09090b'; canvasCtx.fillRect(0, 0, w, h);
-
-    motionElements.forEach(p => {
-      p.x += Math.sin(canvasTime + p.y * 0.05) * 1.2;
-      p.y += Math.cos(canvasTime + p.x * 0.05) * 1.2;
-      
-      const glowGrad = canvasCtx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.size * 5);
-      glowGrad.addColorStop(0, 'rgba(234, 179, 8, 0.9)');
-      glowGrad.addColorStop(1, 'transparent');
-      canvasCtx.fillStyle = glowGrad;
-      canvasCtx.beginPath(); canvasCtx.arc(p.x, p.y, p.size * 5, 0, Math.PI * 2); canvasCtx.fill();
-    });
-  }
-
-  // Theme 9: Sunset Ocean Waves
-  function drawSunsetOceanWaves() {
-    const w = el.bgCanvas.width, h = el.bgCanvas.height;
-    const sky = canvasCtx.createLinearGradient(0, 0, 0, h);
-    sky.addColorStop(0, '#0f172a'); sky.addColorStop(0.6, '#1e3a8a'); sky.addColorStop(1, '#0284c7');
-    canvasCtx.fillStyle = sky; canvasCtx.fillRect(0, 0, w, h);
-
-    for (let i = 0; i < 4; i++) {
-      canvasCtx.fillStyle = `rgba(59, 130, 246, ${0.15 + i * 0.08})`;
-      canvasCtx.beginPath(); canvasCtx.moveTo(0, h);
-      for (let x = 0; x <= w; x += 30) {
-        const y = Math.sin(x * 0.005 + canvasTime * 1.5 + i * 1.2) * (20 + i * 10) + h * 0.6 + (i * 35);
-        canvasCtx.lineTo(x, y);
-      }
-      canvasCtx.lineTo(w, h); canvasCtx.closePath(); canvasCtx.fill();
-    }
-  }
-
-  // --- APPLY THEME ---
+  // --- APPLY THEME & CLOCK STYLES ---
   function applyTheme(themeName) {
     state.settings.theme = themeName;
-    document.body.className = `theme-${themeName}`;
+    document.body.className = document.body.className.replace(/theme-\S+/g, '') + ` theme-${themeName}`;
 
     el.themeCards.forEach(card => {
       card.classList.toggle('active', card.dataset.theme === themeName);
     });
 
     applyOverlayEffects();
+    saveSettingsToStorage();
+  }
+
+  function applyClockStyle(styleName) {
+    state.settings.clockStyle = styleName;
+    document.body.className = document.body.className.replace(/clock-style-\S+/g, '') + ` clock-style-${styleName}`;
+
+    el.clockStyleCards.forEach(card => {
+      card.classList.toggle('active', card.dataset.clock === styleName);
+    });
+
     saveSettingsToStorage();
   }
 
@@ -367,7 +223,7 @@ document.addEventListener('DOMContentLoaded', () => {
     state.settings.bgDarken = el.darkenSlider.value;
   }
 
-  // --- SAFE & ACCURATE TIMESTAMP TIMER ENGINE ---
+  // --- ACCURATE TIMESTAMP TIMER ENGINE ---
   function updateTimerDisplay() {
     const minutes = Math.floor(state.timeLeft / 60);
     const seconds = state.timeLeft % 60;
@@ -420,7 +276,6 @@ document.addEventListener('DOMContentLoaded', () => {
     updateTimerDisplay();
   }
 
-  // PROTECTED MODE SWITCHING (Prompts user if timer is running)
   function switchMode(newMode) {
     if (state.mode === newMode && state.timerState === 'running') return;
 
@@ -436,7 +291,6 @@ document.addEventListener('DOMContentLoaded', () => {
     resetTimer();
   }
 
-  // PROTECTED RESET ACTION
   function handleProtectedReset() {
     if (state.timerState === 'running') {
       const confirmReset = confirm('Are you sure you want to reset the active timer session? Progress will be lost.');
@@ -445,7 +299,6 @@ document.addEventListener('DOMContentLoaded', () => {
     resetTimer();
   }
 
-  // PROTECTED SKIP ACTION
   function handleProtectedSkip() {
     if (state.timerState === 'running') {
       const confirmSkip = confirm('Are you sure you want to skip this active session?');
@@ -576,10 +429,13 @@ document.addEventListener('DOMContentLoaded', () => {
       card.addEventListener('click', () => applyTheme(card.dataset.theme));
     });
 
+    el.clockStyleCards.forEach(card => {
+      card.addEventListener('click', () => applyClockStyle(card.dataset.clock));
+    });
+
     el.speedSlider.addEventListener('input', applyOverlayEffects);
     el.darkenSlider.addEventListener('input', applyOverlayEffects);
 
-    // PROTECTED SAVE SETTINGS (Warns user if timer is active before re-configuring duration)
     el.btnSaveSettings.addEventListener('click', () => {
       const newPomo = Math.max(1, Math.min(120, parseInt(el.settingPomoTime.value) || 25));
       const newShort = Math.max(1, Math.min(60, parseInt(el.settingShortBreak.value) || 5));
