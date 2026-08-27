@@ -1,18 +1,40 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <defs>
-    <linearGradient id="logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+    <linearGradient id="podo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#00f2fe"/>
       <stop offset="50%" stop-color="#4facfe"/>
       <stop offset="100%" stop-color="#ff007f"/>
     </linearGradient>
-    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="12" result="blur"/>
+    <linearGradient id="bg-podo" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#111827"/>
+      <stop offset="100%" stop-color="#090d16"/>
+    </linearGradient>
+    <filter id="podo-glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="10" result="blur"/>
       <feComposite in="SourceGraphic" in2="blur" operator="over"/>
     </filter>
   </defs>
-  <circle cx="256" cy="256" r="230" fill="#090d16" stroke="url(#logo-grad)" stroke-width="24" filter="url(#glow)"/>
-  <circle cx="256" cy="256" r="180" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="12"/>
-  <path d="M256 76 V256 L360 360" fill="none" stroke="url(#logo-grad)" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/>
-  <circle cx="256" cy="256" r="20" fill="#ff007f"/>
-  <path d="M220 28 L292 28" stroke="url(#logo-grad)" stroke-width="20" stroke-linecap="round"/>
+
+  <!-- Background Squircle (Same robust squircle structure as linkshow & spotyshow) -->
+  <rect x="24" y="24" width="464" height="464" rx="128" fill="url(#bg-podo)" stroke="url(#podo-grad)" stroke-width="16" filter="url(#podo-glow)"/>
+  
+  <!-- Inner Subtle Ring -->
+  <rect x="40" y="40" width="432" height="432" rx="112" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="8"/>
+
+  <!-- Timer/Clock Motif -->
+  <g transform="translate(256, 266)">
+    <!-- Outer Clock Dial Circle -->
+    <circle cx="0" cy="0" r="140" fill="none" stroke="url(#podo-grad)" stroke-width="20" filter="url(#podo-glow)"/>
+    <circle cx="0" cy="0" r="110" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="8"/>
+    
+    <!-- Stopwatch Top Button -->
+    <path d="M-30 -160 L30 -160 M0 -160 L0 -140" stroke="url(#podo-grad)" stroke-width="18" stroke-linecap="round"/>
+    
+    <!-- Clock Hands (Cyber Neon) -->
+    <path d="M0 0 L0 -85 M0 0 L65 40" stroke="url(#podo-grad)" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" filter="url(#podo-glow)"/>
+    
+    <!-- Center Pin -->
+    <circle cx="0" cy="0" r="18" fill="#ff007f"/>
+    <circle cx="0" cy="0" r="8" fill="#ffffff"/>
+  </g>
 </svg>
