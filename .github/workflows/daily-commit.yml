@@ -1,0 +1,86 @@
+name: Human-like Weekday Commit
+
+on:
+  schedule:
+    # Runs Monday to Friday at 00:00 UTC (07:00 WIB)
+    - cron: '0 0 * * 1-5'
+  workflow_dispatch: # Allows manual trigger from GitHub UI
+
+permissions:
+  contents: write
+
+jobs:
+  daily_commit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # STEP 1: Probability Check (80% Commit, 20% Rest Day) & Human Delay
+      - name: Penentuan Nasib (Lempar Koin) & Human Jitter
+        id: decision
+        run: |
+          ANGKA=$(( ( RANDOM % 100 ) + 1 ))
+          echo "Angka acak hari ini: $ANGKA"
+
+          # 20% peluang skip (1..20), 80% peluang commit (21..100)
+          if [ $ANGKA -le 20 ]; then
+            echo "Hari ini libur ngoding ah... (20% Skip Chance)"
+            echo "LAKUKAN_COMMIT=false" >> $GITHUB_ENV
+          else
+            echo "Hari ini semangat ngoding! (80% Commit Chance)"
+            echo "LAKUKAN_COMMIT=true" >> $GITHUB_ENV
+
+            # Variasi jeda waktu acak (1-30 detik) agar tidak kaku
+            JITTER=$(( ( RANDOM % 30 ) + 1 ))
+            echo "Human jitter delay: ${JITTER}s"
+            sleep $JITTER
+          fi
+
+      # STEP 2: Eksekusi Commit & Push (Variasi Fix Kecil)
+      - name: Git Commit & Push
+        if: env.LAKUKAN_COMMIT == 'true'
+        run: |
+          # 1. Siapkan file log aktivitas internal
+          mkdir -p .github/logs
+          LOG_FILE=".github/logs/activity.log"
+
+          TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          echo "[$TIMESTAMP] Routine maintenance check passed" >> "$LOG_FILE"
+
+          # 2. Banyak variasi pesan commit ("fixin kecil")
+          MESSAGES=(
+            "fix: adjust minor code formatting and whitespace"
+            "chore: routine dependency check and maintenance log"
+            "docs: update maintenance activity log"
+            "style: refine code structure and alignment"
+            "perf: minor internal optimization tweak"
+            "refactor: tidy up internal helper utilities"
+            "chore: update daily workspace telemetry"
+            "fix: resolve subtle edge case logging format"
+            "style: clean up code indentation"
+            "chore: daily workspace maintenance check"
+          )
+
+          # Pilih pesan commit acak dari daftar
+          RAND_INDEX=$(( RANDOM % ${#MESSAGES[@]} ))
+          COMMIT_MSG="${MESSAGES[$RAND_INDEX]}"
+          echo "Pesan commit terpilih: '$COMMIT_MSG'"
+
+          # 3. Konfigurasi Git Identity
+          git config --global user.name "sulthan"
+          git config --global user.email "thanzero7@gmail.com"
+
+          # 4. Stage & Commit (Cek jika ada perubahan)
+          git add "$LOG_FILE"
+
+          if git diff --staged --quiet; then
+            echo "Tidak ada perubahan untuk di-commit."
+          else
+            git commit -m "$COMMIT_MSG"
+            git push origin HEAD:${{ github.ref }}
+            echo "Commit & push berhasil!"
+          fi
