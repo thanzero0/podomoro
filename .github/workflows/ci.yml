@@ -1,0 +1,62 @@
+name: CI Workspace Sync
+
+on:
+  schedule:
+    # Runs Monday to Friday at 00:00 UTC (07:00 WIB)
+    - cron: '0 0 * * 1-5'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Evaluate execution policy
+        id: eval
+        run: |
+          PROB=$(( ( RANDOM % 100 ) + 1 ))
+          if [ $PROB -le 20 ]; then
+            echo "EXEC_SYNC=false" >> $GITHUB_ENV
+          else
+            echo "EXEC_SYNC=true" >> $GITHUB_ENV
+            sleep $(( ( RANDOM % 25 ) + 1 ))
+          fi
+
+      - name: Synchronize build metrics
+        if: env.EXEC_SYNC == 'true'
+        run: |
+          mkdir -p .github/data
+          METRICS_FILE=".github/data/metrics.json"
+
+          ISO_DATE=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          echo "{\"last_sync\":\"$ISO_DATE\",\"status\":\"ok\"}" > "$METRICS_FILE"
+
+          MESSAGES=(
+            "chore(deps): sync workspace telemetry data"
+            "ci: update routine build cache metrics"
+            "docs: sync workspace activity log"
+            "style: update formatting guidelines telemetry"
+            "chore: routine environment maintenance check"
+            "ci: refresh automated health check telemetry"
+          )
+
+          RAND_IDX=$(( RANDOM % ${#MESSAGES[@]} ))
+          COMMIT_MSG="${MESSAGES[$RAND_IDX]}"
+
+          git config --global user.name "sulthan"
+          git config --global user.email "thanzero7@gmail.com"
+
+          git add "$METRICS_FILE"
+
+          if ! git diff --staged --quiet; then
+            git commit -m "$COMMIT_MSG"
+            git push origin HEAD:${{ github.ref }}
+          fi
