@@ -2,7 +2,7 @@
 
 **Its Podomoro** is an ultra-clean, minimalist Pomodoro timer application featuring 9 dynamic organic motion background scenes, sound ambience, tab icons, and a timestamp-accurate timer engine.
 
-![Its Podomoro](https://raw.githubusercontent.com/thanzero0/podomoro/main/preview.png)
+![Its Podomoro](https://raw.githubusercontent.com/thanzeroo/podomoro/main/preview.png)
 
 ## ✨ Features
 
